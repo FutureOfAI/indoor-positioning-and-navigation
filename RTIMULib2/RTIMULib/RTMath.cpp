@@ -628,5 +628,3 @@ RTFLOAT RTMatrix4x4::matMinor(const int row, const int col)
     return res;
 }
 
-// change test
-
