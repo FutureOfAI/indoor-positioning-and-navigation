@@ -18,7 +18,7 @@ import numpy as np
 class EKF_6states(object):
 	"""docstring for EKF_6states"""
 	def __init__(self, wx, wy, wz, ax, ay, az, mx, my, mz, bgx, bgy, bgz, timestemp):
-		super(EKF_6states, self).__init__()
+		#super(EKF_6states, self).__init__()
 		# save IMU variable
 		self._wx = wx
 		self._wy = wy
@@ -30,7 +30,7 @@ class EKF_6states(object):
 		self._my = my
 		self._mz = mz
 		self._bgx_h = bgx
-		self._bgy_h = bgyS
+		self._bgy_h = bgy
 		self._bgz_h = bgz
 		self._dt = timestemp
 
