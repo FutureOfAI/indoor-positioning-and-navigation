@@ -185,12 +185,12 @@ while True:
             hdt = "IIHDT," + str(round(heading))[:-2]
             iihdt = hdt
 
-	    # iixdr ahrs data
+      # iixdr ahrs data
             xdr_roll = "X:" + str(round(roll,1)) + " Deg"
             xdr_pitch = "Y:"  + str(round(pitch,1)) + " Deg"
             iixdr = xdr_roll + '\n' + xdr_pitch
 
-	    # tirot rate of turn
+      # tirot rate of turn
             rot = "TIROT," + str(yawrate*60)
             tirot = "$" + rot
 
@@ -206,8 +206,8 @@ while True:
             # To kplex
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.sendto(imu_sentence, (IMU_IP, IMU_PORT))
-            print imu_sentence
-            #print ekf6.DCM_calculate()
+            #print imu_sentence
+            print (ekf6.DCM_calculate())
             lcd.clear()
             lcd.message(imu_sentence)
 
