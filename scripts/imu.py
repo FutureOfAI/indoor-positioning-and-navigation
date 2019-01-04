@@ -207,7 +207,7 @@ while True:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.sendto(imu_sentence, (IMU_IP, IMU_PORT))
 	    #print imu_sentence
-      print EKF6.DCM_calculate()
+      print ekf6.DCM_calculate()
 	    lcd.clear()
 	    lcd.message(imu_sentence)
 
