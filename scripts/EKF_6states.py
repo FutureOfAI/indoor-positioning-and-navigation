@@ -30,7 +30,7 @@ class EKF_6states(object):
 		self._my = my
 		self._mz = mz
 		self._bgx_h = bgx
-		self._bgy_h = bgy
+		self._bgy_h = bgyS
 		self._bgz_h = bgz
 		self._dt = timestemp
 
@@ -45,4 +45,5 @@ class EKF_6states(object):
 
 	# get direction cosine matrix from gyroscope meter
 	def DCM_calculate(self):
-		print self._wx
+		# print self._wx
+		pass
