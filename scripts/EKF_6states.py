@@ -45,5 +45,4 @@ class EKF_6states(object):
 
     # get direction cosine matrix from gyroscope meter
     def DCM_calculate(self):
-        # print self._wx
-        pass
+        print (self._wx)
