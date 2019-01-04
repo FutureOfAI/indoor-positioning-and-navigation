@@ -101,7 +101,7 @@ while True:
 
   # if it's been longer than 5 seconds since last print
   if (hack - t_damp) > 5.0:
-      
+
       if (hack - t_fail) > 1.0:
           t_one = 0
           t_three = 0
@@ -131,16 +131,16 @@ while True:
 
     if (hack - t_damp) > .1:
         roll = round(math.degrees(fusionPose[0]) - rolloff, 1)
-	pitch = round(math.degrees(fusionPose[1]) - pitchoff, 1)
+        pitch = round(math.degrees(fusionPose[1]) - pitchoff, 1)
         yaw = round(math.degrees(fusionPose[2])- yawoff, 1)
         rollrate = round(math.degrees(Gyro[0]), 1)
         pitchrate = round(math.degrees(Gyro[1]), 1)
         yawrate = round(math.degrees(Gyro[2]), 1)
-	if yaw < 0.1:
+    if yaw < 0.1:
             yaw = yaw + 360
-	if yaw > 360:
-	    yaw = yaw - 360
-    
+    if yaw > 360:
+        yaw = yaw - 360
+
         # Dampening functions
         roll_total = roll_total - roll_run[t_one]
         roll_run[t_one] = roll
@@ -160,8 +160,8 @@ while True:
         heading = yaw - magnetic_deviation
         if heading < 0.1:
             heading = heading + 360
-	if heading > 360:
-	    heading = heading - 360
+    if heading > 360:
+        heading = heading - 360
 
         t_damp = hack
         t_one += 1
@@ -170,7 +170,7 @@ while True:
         t_three += 1
         if t_three == 30:
            t_three = 0
-  
+
         if (hack - t_print) > 0.2:
 
             # health monitor
@@ -191,7 +191,7 @@ while True:
             iixdr = xdr_roll + '\n' + xdr_pitch
 
 	    # tirot rate of turn
-	    rot = "TIROT," + str(yawrate*60)
+            rot = "TIROT," + str(yawrate*60)
             tirot = "$" + rot
 
             # assemble the sentence
@@ -206,11 +206,11 @@ while True:
             # To kplex
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.sendto(imu_sentence, (IMU_IP, IMU_PORT))
-      #print imu_sentence
-      #print ekf6.DCM_calculate()
-	    lcd.clear()
-	    lcd.message(imu_sentence)
+            print imu_sentence
+            #print ekf6.DCM_calculate()
+            lcd.clear()
+            lcd.message(imu_sentence)
 
             t_print = hack
-        
+
     time.sleep(poll_interval*1.0/1000.0)
