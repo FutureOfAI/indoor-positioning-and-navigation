@@ -18,11 +18,11 @@ import numpy as np
 class EKF_6states(object):
     """docstring for EKF_6states"""
     def __init__(self, wx, wy, wz, ax, ay, az, mx, my, mz, bgx, bgy, bgz, timestemp):
-        #super(EKF_6states, self).__init__()
+        super(EKF_6states, self).__init__()
         # save IMU variable
         self._wx = wx
         self._wy = wy
-        self._wx = wz
+        self._wz = wz
         self._ax = ax
         self._ay = ay
         self._az = az
@@ -45,4 +45,4 @@ class EKF_6states(object):
 
     # get direction cosine matrix from gyroscope meter
     def DCM_calculate(self):
-        print (self._wx)
+        return self._wx
