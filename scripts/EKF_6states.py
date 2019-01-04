@@ -37,7 +37,7 @@ class EKF_6states(object):
     def Predict(self):
         pass
 
-        def Update(self):
+    def Update(self):
         pass
 
     def Measurement(self):
