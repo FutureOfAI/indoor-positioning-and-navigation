@@ -23,5 +23,8 @@ Pitch = 60*d2r
 Yaw = 30*d2r
 
 R1 = ekf6.euler2rotMat(Roll, Pitch, Yaw)
+Q1 = ekf6.rotMat2quatern(R1)
+euler = ekf6.quatern2euler(Q1)*r2d
 
-print (R1)
+print (Q1)
+print (euler)

@@ -85,7 +85,7 @@ class EKF_6states(object):
         return R
 
     def rotMat2quatern(self, R):
-        K = zeros([4,4])
+        K = np.zeros([4,4])
 
         K[0,0] = (1/3)*( R[0,0] - R[1,1] - R[2,2] )
         K[0,1] = (1/3)*( R[1,0] + R[0,1] )
@@ -100,19 +100,19 @@ class EKF_6states(object):
         K[2,0] = (1/3)*( R[2,0] + R[0,2] )
         K[2,1] = (1/3)*( R[2,1] + R[1,2] )
         K[2,2] = (1/3)*( R[2,2] - R[0,0] - R[1,1] )
-        K[2,3] = (1/3)*( R[1,2] - R[2,1] )
+        K[2,3] = (1/3)*( R[0,1] - R[1,0] )
 
         K[3,0] = (1/3)*( R[1,2] - R[2,1] )
         K[3,1] = (1/3)*( R[2,0] - R[0,2] )
-        K[4,2] = (1/3)*( R[0,1] - R[1,0] )
+        K[3,2] = (1/3)*( R[0,1] - R[1,0] )
         K[3,3] = (1/3)*( R[0,0] + R[1,1] + R[2,2] )
 
-        [V,D] = LA.eig(K)
-        q = Quaternion(V)
+        vals,vecs = LA.eigh(K)
+        q = Quaternion([vecs[3,3], vecs[0,3], vecs[1,3], vecs[2,3]])
         return q
 
     def quatern2euler(self, q):
-        R = q.rotation_matrix
+        R = self.quatern2rotMat(q)
 
         phi = np.arctan2(R[2,1], R[2,2])
         theta = -np.arctan( R[2,0]/np.sqrt( 1 - np.square(R[2,0]) ) )
@@ -120,6 +120,23 @@ class EKF_6states(object):
 
         euler = np.array([phi, theta, psi])
         return euler
+
+    def quatern2rotMat(self, q):
+        R = np.zeros([3,3])
+
+        R[0,0] = 2*np.square(q[0])-1+2*np.square(q[1])
+        R[0,1] = 2*(q[1]*q[2]+q[0]*q[3])
+        R[0,2] = 2*(q[1]*q[3]-q[0]*q[2])
+
+        R[1,0] = 2*(q[1]*q[2]-q[0]*q[3])
+        R[1,1] = 2*np.square(q[0])-1+2*np.square(q[2])
+        R[1,2] = 2*(q[2]*q[3]+q[0]*q[1])
+
+        R[2,0] = 2*(q[1]*q[3]+q[0]*q[2])
+        R[2,1] = 2*(q[2]*q[3]-q[0]*q[1])
+        R[2,2] = 2*np.square(q[0])-1+2*np.square(q[3])
+
+        return R
 
     def TRIAD(self, ax, ay, az, mx, my, mz):
         acc_g = np.array([0, 0, -9.8])
