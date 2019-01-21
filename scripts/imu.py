@@ -9,7 +9,7 @@ import operator
 import socket
 import os
 import Adafruit_CharLCD as LCD
-import EKF_6states as EKF6
+#import EKF_6states as EKF6
 
 # Raspberry Pi pin configuration:
 lcd_rs        = 6  # Note this might need to be changed to 21 for older revision Pi's.
@@ -28,7 +28,7 @@ lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7,
                            lcd_columns, lcd_rows)
 
 # Initialize EKF 6-states parameters
-ekf6 = EKF6.EKF_6states(1,2,3,4,5,6,7,8,9,10,11,12,0)
+#ekf6 = EKF6.EKF_6states(1,2,3,4,5,6,7,8,9,10,11,12,0)
 
 IMU_IP = "127.0.0.2"
 IMU_PORT = 5005
@@ -207,7 +207,7 @@ while True:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.sendto(imu_sentence, (IMU_IP, IMU_PORT))
             #print imu_sentence
-            print ekf6.DCM_calculate()
+            #print ekf6.DCM_calculate()
             lcd.clear()
             lcd.message(imu_sentence)
 
