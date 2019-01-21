@@ -75,7 +75,7 @@ class EKF_6states(object):
         R[0,2] = np.sin(psi)*np.sin(phi) + np.cos(psi)*np.sin(theta)*np.cos(phi)
 
         R[1,0] = np.sin(psi)*np.cos(theta)
-        R[1,1] = np.cos(psi)*np.cos(phi) + np.sin(psi)*np.sin(theta)*np.sin(psi)
+        R[1,1] = np.cos(psi)*np.cos(phi) + np.sin(psi)*np.sin(theta)*np.sin(phi)
         R[1,2] = -np.cos(psi)*np.sin(phi) + np.sin(psi)*np.sin(theta)*np.cos(phi)
 
         R[2,0] = -np.sin(theta)
