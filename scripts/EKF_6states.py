@@ -27,17 +27,58 @@ class EKF_6states(object):
         self._Angle_D = 1*4.57*self._d2r;
         self._dt = timestemp
 
-    def initial_states(self):
-        pass
+    def Predict(self, wxp, wyp, wzp, wx, wy, wz, bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z):
+        s6_F_z = np.zeros([6,6])
 
-    def Predict(self):
-        pass
+        DC_E_B_m = self.DCM_calculate(wxp, wyp, wzp, wx, wy, wz, bgx_h, bgy_h, bgz_h, QE_B_m)
 
-    def Update(self):
-        pass
+        s6_F_z[0,3] = -DC_E_B_m[0,0]
+        s6_F_z[0,4] = -DC_E_B_m[1,0]
+        s6_F_z[0,5] = -DC_E_B_m[2,0]
 
-    def Measurement(self):
-        pass
+        s6_F_z[1,3] = -DC_E_B_m[0,1]
+        s6_F_z[1,4] = -DC_E_B_m[1,1]
+        s6_F_z[1,5] = -DC_E_B_m[2,1]
+
+        s6_F_z[2,3] = -DC_E_B_m[0,2]
+        s6_F_z[2,3] = -DC_E_B_m[1,2]
+        s6_F_z[2,3] = -DC_E_B_m[2,2]
+
+        s6_phi_z = LA.expm(s6_F_z*self._dt)
+        s6_xz_h = s6_phi_z.dot(s6_xz_h)
+        s6_P00_z = s6_phi_z.dot(s6_P00_z).dot(s6_phi_z.T) + s6_Q_z*self._dt
+
+        return s6_P00_z
+
+    def Update(self, ax, ay, az, mx, my, mz, QE_B_m, s6_P00_z, s6_H, s6_R):
+        C_E_B_e = self.TRIAD(ax, ay, az, mx, my, mz)
+        tmp = self.rotMat2euler(C_E_B_e.T)
+        C_E_B_e = self.euler2rotMat(-tmp[1], tmp[0], tmp[3])
+        Q_E_B_e = self.rotMat2quatern(C_E_B_e)
+        Q_B_E_m = Q_E_B_e.conjugate
+        dQ = Q_E_B_e.normalised * Q_B_E_m.normalised
+        d_theta = self.quatern2euler(dQ.normalised)
+        # Form the measurement residuals or mu
+        s6_Mu_z = d_theta
+        # Computer the Kalman filter gain matrix K
+        s6_K_z = s6_P00_z.dot(s6_H).divide( s6_H.dot(s6_P00_z).dot(s6_H.T) + s6_R )
+        # Computer the correction vectors
+        s6_z_update = s6_K_z.dot(s6_Mu_z.T)
+        # Perform the Kalman filter error covariance matrix P updates
+        s6_P00_z = (np.identity(6) - s6_K_z.dot(s6_H)).dot(s6_P00_z)
+
+        return s6_P00_z, s6_z_update
+
+    def Measurement(self,dtheda_xh,dtheda_yh,dtheda_zh,k,bgx_h,bgy_h,bgz_h,s6_z_update):
+        dtheda_xh = dtheda_xh + s6_z_update[1]
+        dtheda_yh = dtheda_yh + s6_z_update[2]
+        dtheda_zh = dtheda_zh + s6_z_update[3]
+
+        bgx_h = bgx_h + s6_z_update[4]
+        bgy_h = bgy_h + s6_z_update[5]
+        bgz_h = bgz_h + s6_z_update[6]
+
+        return dtheda_xh,dtheda_yh,dtheda_zh,k,bgx_h,bgy_h,bgz_h
 
     # get direction cosine matrix from gyroscopemeter
     def DCM_calculate(self, wxp, wyp, wzp, wx, wy, wz, bgx_h, bgy_h, bgz_h, QE_B_m):
@@ -111,14 +152,17 @@ class EKF_6states(object):
         q = Quaternion([vecs[3,3], vecs[0,3], vecs[1,3], vecs[2,3]])
         return q
 
-    def quatern2euler(self, q):
-        R = self.quatern2rotMat(q)
-
+    def rotMat2euler(self, R):
         phi = np.arctan2(R[2,1], R[2,2])
         theta = -np.arctan( R[2,0]/np.sqrt( 1 - np.square(R[2,0]) ) )
         psi = np.arctan2(R[1,0], R[0,0])
 
         euler = np.array([phi, theta, psi])
+        return euler
+
+    def quatern2euler(self, q):
+        R = self.quatern2rotMat(q)
+        euler = self.rotMat2euler(R)
         return euler
 
     def quatern2rotMat(self, q):
