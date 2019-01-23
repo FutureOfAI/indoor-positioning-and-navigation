@@ -35,14 +35,6 @@ imu.setGyroEnable(True)
 imu.setAccelEnable(True)
 imu.setCompassEnable(True)
 
-# while True:
-# 	if imu.IMURead():
-# 		data = imu.getIMUData()
-# 		acc = data["accel"]
-# 		gro = data["gyro"]
-# 		mag = data["compass"]
-# 		print acc, gro, mag
-
 # IMU Thread
 class Get_IMU_Data(threading.Thread):
 	def __init__(self, t_name, queue):
@@ -55,7 +47,6 @@ class Get_IMU_Data(threading.Thread):
 				acc = data["accel"]
 				gro = data["gyro"]
 				mag = data["compass"]
-				print acc[0]
 			time.sleep(0.01)
 
 # DWM Thread
@@ -75,12 +66,11 @@ class EKF_Cal_Euler(threading.Thread):
 		self.data = queue
 	def run(self):
 		while True:
-			#print ("task-Euler")
-			time.sleep(1)
+			
+			time.sleep(0.01)
 
 # main Thread
 def main():
-
 	queue = Queue()
 	imu = Get_IMU_Data('IMU.', queue)
 	uwb = Get_UWB_Data('UWB.', queue)
