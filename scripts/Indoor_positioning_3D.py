@@ -21,7 +21,7 @@ from Queue import Queue
 # acc = np.zeros([1,3])
 # gro = np.zeros([1,3])
 # mag = np.zeros([1,3])
-
+print "test2"
 # IMU Thread
 class Get_IMU_Data(threading.Thread):
 	def __init__(self, t_name, queue):
@@ -80,6 +80,8 @@ def main():
 		# gro = data["gyro"]
 		# mag = data["compass"]
 		print fusionPose
+
+	print "test1"
 
 	queue = Queue()
 	imu = Get_IMU_Data('IMU.', queue)
