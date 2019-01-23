@@ -18,9 +18,9 @@ from numpy import linalg as LA
 import EKF_6states as EKF6
 from Queue import Queue
 
-# acc = np.zeros([1,3])
-# gro = np.zeros([1,3])
-# mag = np.zeros([1,3])
+acc = np.zeros([1,3])
+gro = np.zeros([1,3])
+mag = np.zeros([1,3])
 
 # Initialize EKF 6-states parameters
 ekf6 = EKF6.EKF_6states(0.01)
