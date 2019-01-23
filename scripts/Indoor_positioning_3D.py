@@ -31,11 +31,10 @@ s = RTIMU.Settings(SETTINGS_FILE)
 imu = RTIMU.RTIMU(s)
 if (not imu.IMUInit()):
 	print ("IMU Initialize Failed.")
-imu.setSlerpPower(0.02)
 imu.setGyroEnable(True)
 imu.setAccelEnable(True)
 imu.setCompassEnable(True)
-
+imu.IMUGetPollInterval()
 
 if imu.IMURead():
 	data = imu.getIMUData()
@@ -44,7 +43,7 @@ if imu.IMURead():
 	# gro = data["gyro"]
 	# mag = data["compass"]
 	print fusionPose
-				
+
 # IMU Thread
 class Get_IMU_Data(threading.Thread):
 	def __init__(self, t_name, queue):
