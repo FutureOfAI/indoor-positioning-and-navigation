@@ -44,7 +44,7 @@ def Get_IMU_Data():
 	time.sleep(0.01)
 
 IMU_thread = threading.Thread(target = Get_IMU_Data)
-IMU_thread.start()
+IMU_thread.run()
 
 while True:
 	print ("loop")
