@@ -49,7 +49,7 @@ class Get_IMU_Data(threading.Thread):
 				# gro = data["gyro"]
 				# mag = data["compass"]
 				print fusionPose
-			time.sleep(0.01)
+			time.sleep(1)
 
 # DWM Thread
 class Get_UWB_Data(threading.Thread):
@@ -59,7 +59,7 @@ class Get_UWB_Data(threading.Thread):
 	def run(self):
 		while True:
 			print ("task-UWB")
-			time.sleep(0.01)
+			time.sleep(1)
 
 # 6-states EKF thread
 class EKF_Cal_Euler(threading.Thread):
@@ -69,7 +69,7 @@ class EKF_Cal_Euler(threading.Thread):
 	def run(self):
 		while True:
 			print ("task-Euler")
-			time.sleep(0.01)
+			time.sleep(1)
 
 # main Thread
 def main():
