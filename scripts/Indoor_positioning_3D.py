@@ -22,28 +22,6 @@ from Queue import Queue
 # gro = np.zeros([1,3])
 # mag = np.zeros([1,3])
 
-# Initialize EKF 6-states parameters
-ekf6 = EKF6.EKF_6states(0.01)
-
-# IMU Initialization
-SETTINGS_FILE = "RTIMULib"
-s = RTIMU.Settings(SETTINGS_FILE)
-imu = RTIMU.RTIMU(s)
-if (not imu.IMUInit()):
-	print ("IMU Initialize Failed.")
-imu.setGyroEnable(True)
-imu.setAccelEnable(True)
-imu.setCompassEnable(True)
-imu.IMUGetPollInterval()
-
-if imu.IMURead():
-	data = imu.getIMUData()
-	fusionPose = data["fusionPose"]
-	# acc = data["accel"]
-	# gro = data["gyro"]
-	# mag = data["compass"]
-	print fusionPose
-
 # IMU Thread
 class Get_IMU_Data(threading.Thread):
 	def __init__(self, t_name, queue):
@@ -82,6 +60,27 @@ class EKF_Cal_Euler(threading.Thread):
 
 # main Thread
 def main():
+# Initialize EKF 6-states parameters
+ekf6 = EKF6.EKF_6states(0.01)
+
+# IMU Initialization
+SETTINGS_FILE = "RTIMULib"
+s = RTIMU.Settings(SETTINGS_FILE)
+imu = RTIMU.RTIMU(s)
+if (not imu.IMUInit()):
+	print ("IMU Initialize Failed.")
+imu.setGyroEnable(True)
+imu.setAccelEnable(True)
+imu.setCompassEnable(True)
+
+if imu.IMURead():
+	data = imu.getIMUData()
+	fusionPose = data["fusionPose"]
+	# acc = data["accel"]
+	# gro = data["gyro"]
+	# mag = data["compass"]
+	print fusionPose
+
 	queue = Queue()
 	imu = Get_IMU_Data('IMU.', queue)
 	uwb = Get_UWB_Data('UWB.', queue)
