@@ -44,10 +44,11 @@ class Get_IMU_Data(threading.Thread):
 		while True:
 			if imu.IMURead():
 				data = imu.getIMUData()
-				acc = data["accel"]
-				gro = data["gyro"]
-				mag = data["compass"]
-			print acc
+				fusionPose = data["fusionPose"]
+				# acc = data["accel"]
+				# gro = data["gyro"]
+				# mag = data["compass"]
+				print fusionPose
 			time.sleep(0.01)
 
 # DWM Thread
