@@ -35,13 +35,14 @@ imu.setGyroEnable(True)
 imu.setAccelEnable(True)
 imu.setCompassEnable(True)
 
-if imu.IMURead():
-	data = imu.getIMUData()
-	fusionPose = data["fusionPose"]
-	# acc = data["accel"]
-	# gro = data["gyro"]
-	# mag = data["compass"]
-	print fusionPose
+while True:
+	if imu.IMURead():
+		data = imu.getIMUData()
+		fusionPose = data["fusionPose"]
+		# acc = data["accel"]
+		# gro = data["gyro"]
+		# mag = data["compass"]
+		print fusionPose
 
 # # IMU Thread
 # class Get_IMU_Data(threading.Thread):
