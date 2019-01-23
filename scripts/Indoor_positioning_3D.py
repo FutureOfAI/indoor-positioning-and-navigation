@@ -40,10 +40,12 @@ def Get_IMU_Data():
 		acc = data["accel"]
 		gro = data["gyro"]
 		mag = data["compass"]
+		print ("task IMU")
 	time.sleep(10)
 
 IMU_thread = threading.Thread(target = Get_IMU_Data)
 IMU_thread.start()
 
 while True:
+	print ("loop")
 	time.sleep(10)
