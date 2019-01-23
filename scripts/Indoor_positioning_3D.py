@@ -23,7 +23,7 @@ from Queue import Queue
 # mag = np.zeros([1,3])
 
 # Initialize EKF 6-states parameters
-#ekf6 = EKF6.EKF_6states(0.01)
+ekf6 = EKF6.EKF_6states(0.01)
 
 # IMU Initialization
 SETTINGS_FILE = "RTIMULib"
@@ -38,11 +38,10 @@ imu.setCompassEnable(True)
 while True:
 	if imu.IMURead():
 		data = imu.getIMUData()
-		fusionPose = data["fusionPose"]
-		# acc = data["accel"]
-		# gro = data["gyro"]
-		# mag = data["compass"]
-		print fusionPose
+		acc = data["accel"]
+		gro = data["gyro"]
+		mag = data["compass"]
+		print acc, gro, mag
 
 # # IMU Thread
 # class Get_IMU_Data(threading.Thread):
