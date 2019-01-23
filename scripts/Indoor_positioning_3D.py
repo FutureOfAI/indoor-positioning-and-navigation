@@ -7,6 +7,7 @@ sys.path.append('.')
 import RTIMU
 import os.path
 import threading
+import Queue
 import time
 import math
 import operator
@@ -16,7 +17,6 @@ import numpy as np
 from pyquaternion import Quaternion
 from numpy import linalg as LA
 import EKF_6states as EKF6
-from Queue import Queue
 
 acc = np.zeros([1,3])
 gro = np.zeros([1,3])
@@ -36,7 +36,7 @@ imu.setAccelEnable(True)
 imu.setCompassEnable(True)
 
 # IMU Thread
-class Get_IMU_Data(threading, Thread):
+class Get_IMU_Data(threading.Thread):
 	def __init__(self, t_name, queue):
 		threading.Thread.__init__(self, name = t_name)
 		self.data = queue
@@ -51,7 +51,7 @@ class Get_IMU_Data(threading, Thread):
 			time.sleep(0.01)
 
 # DWM Thread
-class Get_UWB_Data(threading, Thread):
+class Get_UWB_Data(threading.Thread):
 	def __init__(self, t_name, queue):
 		threading.Thread.__init__(self, name = t_name)
 		self.data = queue
@@ -61,7 +61,7 @@ class Get_UWB_Data(threading, Thread):
 			time.sleep(0.01)
 
 # 6-states EKF thread
-class EKF_Cal_Euler(threading, Thread):
+class EKF_Cal_Euler(threading.Thread):
 	def __init__(self, t_name, queue):
 		threading.Thread.__init__(self, name = t_name)
 		self.data = queue
