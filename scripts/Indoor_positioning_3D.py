@@ -4,6 +4,7 @@ This python module is used to positioning in indoor environment based on UWB and
 import sys, getopt
 
 sys.path.append('.')
+import RTIMU
 import os.path
 import threading
 import time
