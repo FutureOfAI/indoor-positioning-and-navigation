@@ -43,57 +43,57 @@ if imu.IMURead():
 	# mag = data["compass"]
 	print fusionPose
 
-# IMU Thread
-class Get_IMU_Data(threading.Thread):
-	def __init__(self, t_name, queue):
-		threading.Thread.__init__(self, name = t_name)
-		self.data = queue
-	def run(self):
-		while True:
-			# if imu.IMURead():
-			# 	data = imu.getIMUData()
-			# 	fusionPose = data["fusionPose"]
-			# 	# acc = data["accel"]
-			# 	# gro = data["gyro"]
-			# 	# mag = data["compass"]
-			# 	print fusionPose
-			time.sleep(1)
+# # IMU Thread
+# class Get_IMU_Data(threading.Thread):
+# 	def __init__(self, t_name, queue):
+# 		threading.Thread.__init__(self, name = t_name)
+# 		self.data = queue
+# 	def run(self):
+# 		while True:
+# 			# if imu.IMURead():
+# 			# 	data = imu.getIMUData()
+# 			# 	fusionPose = data["fusionPose"]
+# 			# 	# acc = data["accel"]
+# 			# 	# gro = data["gyro"]
+# 			# 	# mag = data["compass"]
+# 			# 	print fusionPose
+# 			time.sleep(1)
 
-# DWM Thread
-class Get_UWB_Data(threading.Thread):
-	def __init__(self, t_name, queue):
-		threading.Thread.__init__(self, name = t_name)
-		self.data = queue
-	def run(self):
-		while True:
-			print ("task-UWB")
-			time.sleep(1)
+# # DWM Thread
+# class Get_UWB_Data(threading.Thread):
+# 	def __init__(self, t_name, queue):
+# 		threading.Thread.__init__(self, name = t_name)
+# 		self.data = queue
+# 	def run(self):
+# 		while True:
+# 			print ("task-UWB")
+# 			time.sleep(1)
 
-# 6-states EKF thread
-class EKF_Cal_Euler(threading.Thread):
-	def __init__(self, t_name, queue):
-		threading.Thread.__init__(self, name = t_name)
-		self.data = queue
-	def run(self):
-		while True:
-			print ("task-Euler")
-			time.sleep(1)
+# # 6-states EKF thread
+# class EKF_Cal_Euler(threading.Thread):
+# 	def __init__(self, t_name, queue):
+# 		threading.Thread.__init__(self, name = t_name)
+# 		self.data = queue
+# 	def run(self):
+# 		while True:
+# 			print ("task-Euler")
+# 			time.sleep(1)
 
-# main Thread
-def main():
+# # main Thread
+# def main():
 
-	queue = Queue()
-	imu = Get_IMU_Data('IMU.', queue)
-	uwb = Get_UWB_Data('UWB.', queue)
-	euler = EKF_Cal_Euler('Euler.',queue)
-	imu.start()
-	uwb.start()
-	euler.start()
-	imu.join()
-	uwb.join()
-	euler.join()
-	print ('All threads terminate!')
+# 	queue = Queue()
+# 	imu = Get_IMU_Data('IMU.', queue)
+# 	uwb = Get_UWB_Data('UWB.', queue)
+# 	euler = EKF_Cal_Euler('Euler.',queue)
+# 	imu.start()
+# 	uwb.start()
+# 	euler.start()
+# 	imu.join()
+# 	uwb.join()
+# 	euler.join()
+# 	print ('All threads terminate!')
 
 
-if __name__ == '__main__':
-	main()
+# if __name__ == '__main__':
+# 	main()
