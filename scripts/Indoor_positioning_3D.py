@@ -16,6 +16,7 @@ import numpy as np
 from pyquaternion import Quaternion
 from numpy import linalg as LA
 import EKF_6states as EKF6
+from queue import Queue
 
 acc = np.zeros([1,3])
 gro = np.zeros([1,3])
@@ -34,18 +35,55 @@ imu.setGyroEnable(True)
 imu.setAccelEnable(True)
 imu.setCompassEnable(True)
 
-def Get_IMU_Data():
-	if imu.IMURead():
-		data = imu.getIMUData()
-		acc = data["accel"]
-		gro = data["gyro"]
-		mag = data["compass"]
-	print ("task IMU")
-	time.sleep(0.01)
+# IMU Thread
+class Get_IMU_Data(threading, Thread):
+	def __init__(self, t_name, queue):
+		threading.Thread.__init__(self, name = t_name)
+		self.data = queue
+	def run(self):
+		while True:
+			if imu.IMURead():
+				data = imu.getIMUData()
+				acc = data["accel"]
+				gro = data["gyro"]
+				mag = data["compass"]
+			print ("task-IMU")
+			time.sleep(0.01)
 
-IMU_thread = threading.Thread(target = Get_IMU_Data)
-IMU_thread.run()
+# DWM Thread
+class Get_UWB_Data(threading, Thread):
+	def __init__(self, t_name, queue):
+		threading.Thread.__init__(self, name = t_name)
+		self.data = queue
+	def run(self):
+		while True:
+			print ("task-UWB")
+			time.sleep(0.01)
 
-while True:
-	print ("loop")
-	time.sleep(0.01)
+# 6-states EKF thread
+class EKF_Cal_Euler(threading, Thread):
+	def __init__(self, t_name, queue):
+		threading.Thread.__init__(self, name = t_name)
+		self.data = queue
+	def run(self):
+		while True:
+			print ("task-Euler")
+			time.sleep(0.01)
+
+# main Thread
+def main():
+	queue = Queue()
+	imu = Get_IMU_Data('IMU.', queue)
+	uwb = Get_UWB_Data('UWB.', queue)
+	euler = EKF_Cal_Euler('Euler.',queue)
+	imu.start()
+	uwb.start()
+	euler.start()
+	imu.join()
+	uwb.join()
+	euler.join()
+	print ('All threads terminate!')
+
+
+if __name__ == '__main__':
+	main()
