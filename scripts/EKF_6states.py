@@ -28,7 +28,8 @@ class EKF_6states(object):
         self._dt = timestemp
 
     def Predict(self, wxp, wyp, wzp, wx, wy, wz, bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z):
-        s6_F_z = np.zeros([6,6])
+        pass
+        #s6_F_z = np.zeros([6,6])
 
         #DC_E_B_m, QE_B_m = self.DCM_calculate(wxp, wyp, wzp, wx, wy, wz, bgx_h, bgy_h, bgz_h, QE_B_m)
 
