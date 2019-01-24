@@ -27,7 +27,7 @@ class EKF_6states(object):
         self._Angle_D = 1*4.57*self._d2r;
         self._dt = timestemp
 
-    def Predict(self):
+    def Predict(self, wxp, wyp, wzp):
         pass
         #s6_F_z = np.zeros([6,6])
 
