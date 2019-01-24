@@ -30,8 +30,10 @@ class EKF_6states(object):
     def Predict(self, wxp, wyp, wzp, wx, wy, wz, bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z):
         s6_F_z = np.zeros([6,6])
 
-        DC_E_B_m, QE_B_m = self.DCM_calculate(wxp, wyp, wzp, wx, wy, wz, bgx_h, bgy_h, bgz_h, QE_B_m)
+        #DC_E_B_m, QE_B_m = self.DCM_calculate(wxp, wyp, wzp, wx, wy, wz, bgx_h, bgy_h, bgz_h, QE_B_m)
 
+        DC_E_B_m = np.ones([3,3])
+        
         s6_F_z[0,3] = -DC_E_B_m[0,0]
         s6_F_z[0,4] = -DC_E_B_m[1,0]
         s6_F_z[0,5] = -DC_E_B_m[2,0]
