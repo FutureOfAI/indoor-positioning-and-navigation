@@ -15,6 +15,7 @@ output is Euler angle.
 import numpy as np
 from pyquaternion import Quaternion
 from scipy import linalg as LA
+from sklearn.preprocessing import normalize
 
 class EKF_6states(object):
     """docstring for EKF_6states"""
