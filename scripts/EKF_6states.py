@@ -48,7 +48,7 @@ class EKF_6states(object):
         s6_xz_h = s6_phi_z.dot(s6_xz_h)
         s6_P00_z = s6_phi_z.dot(s6_P00_z).dot(s6_phi_z.T) + s6_Q_z*self._dt
 
-        return s6_P00_z
+        return s6_P00_z, QE_B_m
 
     def Update(self, ax, ay, az, mx, my, mz, s6_P00_z, s6_H, s6_R):
         C_E_B_e = self.TRIAD(ax, ay, az, mx, my, mz)
