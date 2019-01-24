@@ -4,7 +4,7 @@ This python module is used to positioning in indoor environment based on UWB and
 import sys, getopt
 
 sys.path.append('.')
-import RTIMU
+#import RTIMU
 import os.path
 import threading
 import time
@@ -16,7 +16,7 @@ import numpy as np
 from pyquaternion import Quaternion
 from numpy import linalg as LA
 import EKF_6states as EKF6
-from Queue import Queue
+from queue import Queue
 
 acc = np.zeros([1,3])
 gro = np.zeros([1,3])
@@ -27,14 +27,18 @@ mag = np.zeros([1,3])
 ekf6 = EKF6.EKF_6states(0.01)
 
 # IMU Initialization
-SETTINGS_FILE = "RTIMULib"
-s = RTIMU.Settings(SETTINGS_FILE)
-imu = RTIMU.RTIMU(s)
-if (not imu.IMUInit()):
-	print ("IMU Initialize Failed.")
-imu.setGyroEnable(True)
-imu.setAccelEnable(True)
-imu.setCompassEnable(True)
+##SETTINGS_FILE = "RTIMULib"
+##s = RTIMU.Settings(SETTINGS_FILE)
+##imu = RTIMU.RTIMU(s)
+##if (not imu.IMUInit()):
+##	print ("IMU Initialize Failed.")
+##imu.setGyroEnable(True)
+##imu.setAccelEnable(True)
+##imu.setCompassEnable(True)
+
+acc = np.array([1, 0, 0])
+gro = np.array([0, 1, 0])
+mag = np.array([0, 0, 1])
 
 gyro_err_flag = 1
 gyro_bias_flag = 1
@@ -61,7 +65,7 @@ bgy_h = 0
 bgz_h = 0
 
 dq11 = 0
-dq21 =0 
+dq21 =0
 dq31 = 0
 q2 = -dq11
 q3 = -dq21
@@ -123,11 +127,11 @@ class Get_IMU_Data(threading.Thread):
 		self.data = queue
 	def run(self):
 		while True:
-			if imu.IMURead():
-				data = imu.getIMUData()
-				acc = data["accel"]
-				gro = data["gyro"]
-				mag = data["compass"]
+##			if imu.IMURead():
+##				data = imu.getIMUData()
+##				acc = data["accel"]
+##				gro = data["gyro"]
+##				mag = data["compass"]
 			time.sleep(0.01)
 
 # DWM Thread
@@ -147,16 +151,13 @@ class EKF_Cal_Euler(threading.Thread):
 		self.data = queue
 	def run(self):
 		while True:
-			global w_EB_B_xm, w_EB_B_ym, w_EB_B_zm
+			global w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, bgx_h, bgy_h, bgz_h, QE_B_m, s6_P00_z
 			# predict
 			s6_P00_z, QE_B_m = ekf6.Predict(w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, gro[0], gro[1], gro[2], bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z)
 			# update
 			s6_P00_z, s6_z_update = ekf6.Update(acc[0], acc[1], acc[2], mag[0], mag[1], mag[2], s6_P00_z, s6_H, s6_R)
 			# measurement
-			dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h = ekf6.Measurement(dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, s6_z_update)
-			w_EB_B_xm = w_EB_B_xm - bgx_h
-			w_EB_B_ym = w_EB_B_ym - bgy_h
-			w_EB_B_zm = w_EB_B_zm - bgz_h
+			dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm = ekf6.Measurement(dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, s6_z_update, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm)
 			# calculate euler angle
 			q2 = -dtheda_xh/2
 			q3 = -dtheda_yh/2
@@ -165,7 +166,7 @@ class EKF_Cal_Euler(threading.Thread):
 			dQ2 = Quaternion(q1, q2, q3, q4)
 			QE_B_m = dQ2.normalised * QE_B_m.normalised
 			Angle = ekf6.quatern2euler(QE_B_m)
-			print Angle
+			print (Angle)
 			time.sleep(0.01)
 
 # main Thread

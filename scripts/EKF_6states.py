@@ -14,7 +14,7 @@ output is Euler angle.
 # import os
 import numpy as np
 from pyquaternion import Quaternion
-from numpy import linalg as LA
+from scipy import linalg as LA
 
 class EKF_6states(object):
     """docstring for EKF_6states"""
@@ -53,7 +53,7 @@ class EKF_6states(object):
     def Update(self, ax, ay, az, mx, my, mz, s6_P00_z, s6_H, s6_R):
         C_E_B_e = self.TRIAD(ax, ay, az, mx, my, mz)
         tmp = self.rotMat2euler(C_E_B_e.T)
-        C_E_B_e = self.euler2rotMat(-tmp[1], tmp[0], tmp[3])
+        C_E_B_e = self.euler2rotMat(-tmp[1], tmp[0], tmp[2])
         Q_E_B_e = self.rotMat2quatern(C_E_B_e)
         Q_B_E_m = Q_E_B_e.conjugate
         dQ = Q_E_B_e.normalised * Q_B_E_m.normalised
@@ -61,7 +61,7 @@ class EKF_6states(object):
         # Form the measurement residuals or mu
         s6_Mu_z = d_theta
         # Computer the Kalman filter gain matrix K
-        s6_K_z = s6_P00_z.dot(s6_H).divide( s6_H.dot(s6_P00_z).dot(s6_H.T) + s6_R )
+        s6_K_z = s6_P00_z.dot(s6_H.T).dot( LA.inv(s6_H.dot(s6_P00_z).dot(s6_H.T) + s6_R) )
         # Computer the correction vectors
         s6_z_update = s6_K_z.dot(s6_Mu_z.T)
         # Perform the Kalman filter error covariance matrix P updates
@@ -69,7 +69,7 @@ class EKF_6states(object):
 
         return s6_P00_z, s6_z_update
 
-    def Measurement(self, dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, s6_z_update):
+    def Measurement(self, dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, s6_z_update, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm):
 
         dtheda_xh = dtheda_xh + s6_z_update[1]
         dtheda_yh = dtheda_yh + s6_z_update[2]
@@ -79,7 +79,11 @@ class EKF_6states(object):
         bgy_h = bgy_h + s6_z_update[5]
         bgz_h = bgz_h + s6_z_update[6]
 
-        return dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h
+        w_EB_B_xm = w_EB_B_xm - bgx_h
+        w_EB_B_ym = w_EB_B_ym - bgy_h
+        w_EB_B_zm = w_EB_B_zm - bgz_h
+
+        return dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm
 
     # get direction cosine matrix from gyroscopemeter
     def DCM_calculate(self, wxp, wyp, wzp, wx, wy, wz, bgx_h, bgy_h, bgz_h, QE_B_m):
@@ -205,5 +209,5 @@ class EKF_6states(object):
         M_E = np.array([s_E, r_E, q_E])
         norm_M_E = M_E/LA.norm(M_E)
 
-        C_E_B_e = norm_M_B.reshape([3,1]).dot(norm_M_E.reshape([1,3]))
+        C_E_B_e = norm_M_B.dot(norm_M_E.T)
         return C_E_B_e
