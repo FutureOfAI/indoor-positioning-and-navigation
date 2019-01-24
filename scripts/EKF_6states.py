@@ -193,9 +193,11 @@ class EKF_6states(object):
         mag_E = np.array([self._Mag*np.cos(self._Angle_I)*np.sin(self._Angle_D), self._Mag*np.cos(self._Angle_I)*np.cos(self._Angle_D), -self._Mag*np.sin(self._Angle_I)])
 
         a_B = np.array([ax, ay, az])
-        q_B = a_B/LA.norm(a_B)
+        #q_B = a_B/LA.norm(a_B)
+        q_B = normalize(a_B)
         m_B = np.array([mx, my, mz])
-        m_B_u = m_B/LA.norm(m_B)
+        #m_B_u = m_B/LA.norm(m_B)
+        m_B_u = normalize(m_B_u)
         r_B_n = np.cross(q_B, m_B_u)
         r_B = r_B_n/LA.norm(r_B_n)
         s_B = np.cross(q_B, r_B)
