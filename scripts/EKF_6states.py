@@ -203,7 +203,8 @@ class EKF_6states(object):
         r_B = normalize(r_B_n, norm='l2')
         s_B = np.cross(q_B, r_B)
         M_B = np.array([s_B, r_B, q_B])
-        norm_M_B = M_B/LA.norm(M_B)
+        #norm_M_B = M_B/LA.norm(M_B)
+        norm_M_B = normalize(M_B, norm='l2')
 
         q_E = acc_g/LA.norm(acc_g)
         mag_E_u = mag_E/LA.norm(mag_E)
