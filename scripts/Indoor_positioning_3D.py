@@ -18,9 +18,9 @@ from numpy import linalg as LA
 import EKF_6states as EKF6
 from Queue import Queue
 
-acc = np.zeros([1,3])
-gro = np.zeros([1,3])
-mag = np.zeros([1,3])
+acc = np.zeros(3)
+gro = np.zeros(3)
+mag = np.zeros(3)
 
 # Initialize EKF 6-states parameters 0.01s
 ekf6 = EKF6.EKF_6states(0.01)
@@ -152,7 +152,7 @@ class EKF_Cal_Euler(threading.Thread):
 		while True:
 			global w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, bgx_h, bgy_h, bgz_h, QE_B_m, s6_P00_z, dtheda_xh, dtheda_yh, dtheda_zh
 			# predict
-			s6_P00_z, QE_B_m = ekf6.Predict(w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, gro[0], gro[1], gro[2])
+			s6_P00_z, QE_B_m = ekf6.Predict(w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, gro[0], gro[1], gro[2], bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z)
 			# update
 			s6_P00_z, s6_z_update = ekf6.Update(acc[0], acc[1], acc[2], mag[0], mag[1], mag[2], s6_P00_z, s6_H, s6_R)
 			# measurement
