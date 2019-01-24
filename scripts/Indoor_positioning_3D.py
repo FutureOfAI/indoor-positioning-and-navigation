@@ -127,6 +127,7 @@ class Get_IMU_Data(threading.Thread):
 				acc = data["accel"]
 				gro = data["gyro"]
 				mag = data["compass"]
+				print "IMU is ok"
 			time.sleep(0.01)
 
 # DWM Thread
