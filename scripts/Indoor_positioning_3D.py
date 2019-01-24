@@ -20,6 +20,7 @@ from Queue import Queue
 
 acc = np.zeros([1,3])
 gro = np.zeros([1,3])
+grop = np.zeros([1,3])
 mag = np.zeros([1,3])
 
 # Initialize EKF 6-states parameters
@@ -35,6 +36,34 @@ imu.setGyroEnable(True)
 imu.setAccelEnable(True)
 imu.setCompassEnable(True)
 
+# EKF Initial params
+dtheda_xh = 0
+dtheda_yh = 0
+dtheda_zh = 0
+
+bgx_h = 0
+bgy_h = 0
+bgz_h = 0
+
+dq11 = 0
+dq21 =0 
+dq31 = 0
+q1 = np.sqrt(1-np.square(dq11)-np.square(dq21)-np.square(dq31))
+q2 = -dq11
+q3 = -dq21
+q4 = -dq31
+dQerr = Quaternion(q1, q2, q3, q4)
+Q_E_B = Quaternion(1, 0, 0, 0)
+QE_B_m = dQerr.normalised * Q_E_B.normalised
+
+s6_xz_h = np.zeros([6,1])
+s6_xz_h[0,0] = 
+s6_xz_h[1,0]
+s6_xz_h[2,0]
+s6_xz_h[3,0]
+s6_xz_h[4,0]
+s6_xz_h[5,0]
+
 # IMU Thread
 class Get_IMU_Data(threading.Thread):
 	def __init__(self, t_name, queue):
@@ -45,6 +74,8 @@ class Get_IMU_Data(threading.Thread):
 			if imu.IMURead():
 				data = imu.getIMUData()
 				acc = data["accel"]
+				# save last gyro data
+				grop = gro
 				gro = data["gyro"]
 				mag = data["compass"]
 			time.sleep(0.01)
@@ -66,7 +97,8 @@ class EKF_Cal_Euler(threading.Thread):
 		self.data = queue
 	def run(self):
 		while True:
-			
+			for x in range(0,2):
+				ekf6.Predict(grop[0], grop[1], grop[2], gro[0], gro[1], gro[2], bgx_h, bgy_h, bgz_h, QE_B_m, )
 			time.sleep(0.01)
 
 # main Thread
