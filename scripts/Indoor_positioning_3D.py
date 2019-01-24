@@ -16,7 +16,7 @@ import numpy as np
 from pyquaternion import Quaternion
 from numpy import linalg as LA
 import EKF_6states as EKF6
-from queue import Queue
+from Queue import Queue
 
 acc = np.zeros([1,3])
 gro = np.zeros([1,3])
