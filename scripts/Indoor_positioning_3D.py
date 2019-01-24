@@ -20,25 +20,24 @@ from queue import Queue
 
 acc = np.zeros([1,3])
 gro = np.zeros([1,3])
-grop = np.zeros([1,3])
 mag = np.zeros([1,3])
 
 # Initialize EKF 6-states parameters 0.01s
 ekf6 = EKF6.EKF_6states(0.01)
 
 # IMU Initialization
-##SETTINGS_FILE = "RTIMULib"
-##s = RTIMU.Settings(SETTINGS_FILE)
-##imu = RTIMU.RTIMU(s)
-##if (not imu.IMUInit()):
-##	print ("IMU Initialize Failed.")
-##imu.setGyroEnable(True)
-##imu.setAccelEnable(True)
-##imu.setCompassEnable(True)
+SETTINGS_FILE = "RTIMULib"
+s = RTIMU.Settings(SETTINGS_FILE)
+imu = RTIMU.RTIMU(s)
+if (not imu.IMUInit()):
+	print ("IMU Initialize Failed.")
+imu.setGyroEnable(True)
+imu.setAccelEnable(True)
+imu.setCompassEnable(True)
 
-acc = np.array([1, 0, 0])
-gro = np.array([0, 1, 0])
-mag = np.array([0, 0, 1])
+#acc = np.array([1, 0, 0])
+#gro = np.array([0, 1, 0])
+#mag = np.array([0, 0, 1])
 
 gyro_err_flag = 1
 gyro_bias_flag = 1
