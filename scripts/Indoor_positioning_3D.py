@@ -4,7 +4,7 @@ This python module is used to positioning in indoor environment based on UWB and
 import sys, getopt
 
 sys.path.append('.')
-##import RTIMU
+import RTIMU
 import os.path
 import threading
 import time
@@ -16,7 +16,7 @@ import numpy as np
 from pyquaternion import Quaternion
 from numpy import linalg as LA
 import EKF_6states as EKF6
-from queue import Queue
+from Queue import Queue
 
 acc = np.zeros(3)
 gro = np.zeros(3)
@@ -26,18 +26,14 @@ mag = np.zeros(3)
 ekf6 = EKF6.EKF_6states(0.01)
 
 # IMU Initialization
-##SETTINGS_FILE = "RTIMULib"
-##s = RTIMU.Settings(SETTINGS_FILE)
-##imu = RTIMU.RTIMU(s)
-##if (not imu.IMUInit()):
-##	print ("IMU Initialize Failed.")
-##imu.setGyroEnable(True)
-##imu.setAccelEnable(True)
-##imu.setCompassEnable(True)
-
-#acc = np.array([1, 0, 0])
-#gro = np.array([0, 1, 0])
-#mag = np.array([0, 0, 1])
+SETTINGS_FILE = "RTIMULib"
+s = RTIMU.Settings(SETTINGS_FILE)
+imu = RTIMU.RTIMU(s)
+if (not imu.IMUInit()):
+	print ("IMU Initialize Failed.")
+imu.setGyroEnable(True)
+imu.setAccelEnable(True)
+imu.setCompassEnable(True)
 
 gyro_err_flag = 1
 gyro_bias_flag = 1
@@ -126,11 +122,11 @@ class Get_IMU_Data(threading.Thread):
 		self.data = queue
 	def run(self):
 		while True:
-##			if imu.IMURead():
-##				data = imu.getIMUData()
-##				acc = data["accel"]
-##				gro = data["gyro"]
-##				mag = data["compass"]
+			if imu.IMURead():
+				data = imu.getIMUData()
+				acc = data["accel"]
+				gro = data["gyro"]
+				mag = data["compass"]
 			time.sleep(0.01)
 
 # DWM Thread

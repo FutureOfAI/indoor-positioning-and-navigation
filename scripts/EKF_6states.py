@@ -15,7 +15,6 @@ output is Euler angle.
 import numpy as np
 from pyquaternion import Quaternion
 from scipy import linalg as LA
-import librosa
 
 class EKF_6states(object):
     """docstring for EKF_6states"""
@@ -193,26 +192,26 @@ class EKF_6states(object):
         mag_E = np.array([self._Mag*np.cos(self._Angle_I)*np.sin(self._Angle_D), self._Mag*np.cos(self._Angle_I)*np.cos(self._Angle_D), -self._Mag*np.sin(self._Angle_I)])
 
         a_B = np.array([ax, ay, az])
-        q_B = a_B/LA.norm(a_B)
-        #q_B = normalize(a_B, norm='l2')
+        q_B = self.normalize(a_B)
         m_B = np.array([mx, my, mz])
-        m_B_u = m_B/LA.norm(m_B)
-        #m_B_u = normalize(m_B, norm='l2')
+        m_B_u = self.normalize(m_B)
         r_B_n = np.cross(q_B, m_B_u)
-        r_B = r_B_n/LA.norm(r_B_n)
-        #r_B = normalize(r_B_n, norm='l2')
+        r_B = self.normalize(r_B_n)
         s_B = np.cross(q_B, r_B)
         M_B = np.array([s_B, r_B, q_B])
-        norm_M_B = M_B/LA.norm(M_B)
-        #norm_M_B = normalize(M_B, norm='l2')
 
-        q_E = acc_g/LA.norm(acc_g)
-        mag_E_u = mag_E/LA.norm(mag_E)
+        q_E = self.normalize(acc_g)
+        mag_E_u = self.normalize(mag_E)
         r_E_n = np.cross(q_E, mag_E_u)
-        r_E = r_E_n/LA.norm(r_E_n)
+        r_E = self.normalize(r_E_n)
         s_E = np.cross(q_E, r_E)
         M_E = np.array([s_E, r_E, q_E])
-        norm_M_E = M_E/LA.norm(M_E)
 
-        C_E_B_e = norm_M_B.dot(norm_M_E.T)
+        C_E_B_e = M_B.dot(M_E.T)
         return C_E_B_e
+
+    def normalize(self, v):
+        norm_v = np.linalg.norm(v)
+        if norm_v == 0:
+            return v
+        return v/norm_v
