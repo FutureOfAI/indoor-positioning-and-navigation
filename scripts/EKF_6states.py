@@ -32,17 +32,17 @@ class EKF_6states(object):
 
         DC_E_B_m, QE_B_m = self.DCM_calculate(wxp, wyp, wzp, wx, wy, wz, bgx_h, bgy_h, bgz_h, QE_B_m)
 
-        s6_F_z[0,3] = -DC_E_B_m[0,0]
-        s6_F_z[0,4] = -DC_E_B_m[1,0]
-        s6_F_z[0,5] = -DC_E_B_m[2,0]
+        #s6_F_z[0,3] = -DC_E_B_m[0,0]
+        #s6_F_z[0,4] = -DC_E_B_m[1,0]
+        #s6_F_z[0,5] = -DC_E_B_m[2,0]
 
-        s6_F_z[1,3] = -DC_E_B_m[0,1]
-        s6_F_z[1,4] = -DC_E_B_m[1,1]
-        s6_F_z[1,5] = -DC_E_B_m[2,1]
+        #s6_F_z[1,3] = -DC_E_B_m[0,1]
+        #s6_F_z[1,4] = -DC_E_B_m[1,1]
+        #s6_F_z[1,5] = -DC_E_B_m[2,1]
 
-        s6_F_z[2,3] = -DC_E_B_m[0,2]
-        s6_F_z[2,3] = -DC_E_B_m[1,2]
-        s6_F_z[2,3] = -DC_E_B_m[2,2]
+        #s6_F_z[2,3] = -DC_E_B_m[0,2]
+        #s6_F_z[2,3] = -DC_E_B_m[1,2]
+        #s6_F_z[2,3] = -DC_E_B_m[2,2]
 
         s6_phi_z = LA.expm(s6_F_z*self._dt)
         s6_xz_h = s6_phi_z.dot(s6_xz_h)
