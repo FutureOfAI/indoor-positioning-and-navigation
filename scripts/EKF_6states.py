@@ -50,7 +50,7 @@ class EKF_6states(object):
 
         return s6_P00_z
 
-    def Update(self, ax, ay, az, mx, my, mz, QE_B_m, s6_P00_z, s6_H, s6_R):
+    def Update(self, ax, ay, az, mx, my, mz, s6_P00_z, s6_H, s6_R):
         C_E_B_e = self.TRIAD(ax, ay, az, mx, my, mz)
         tmp = self.rotMat2euler(C_E_B_e.T)
         C_E_B_e = self.euler2rotMat(-tmp[1], tmp[0], tmp[3])
@@ -69,7 +69,7 @@ class EKF_6states(object):
 
         return s6_P00_z, s6_z_update
 
-    def Measurement(self,dtheda_xh,dtheda_yh,dtheda_zh,k,bgx_h,bgy_h,bgz_h,s6_z_update):
+    def Measurement(self, dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, s6_z_update, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm):
         dtheda_xh = dtheda_xh + s6_z_update[1]
         dtheda_yh = dtheda_yh + s6_z_update[2]
         dtheda_zh = dtheda_zh + s6_z_update[3]
@@ -78,7 +78,12 @@ class EKF_6states(object):
         bgy_h = bgy_h + s6_z_update[5]
         bgz_h = bgz_h + s6_z_update[6]
 
-        return dtheda_xh,dtheda_yh,dtheda_zh,k,bgx_h,bgy_h,bgz_h
+        w_EB_B_xm = w_EB_B_xm - bgx_h
+        w_EB_B_ym = w_EB_B_ym - bgy_h
+        w_EB_B_zm = w_EB_B_zm - bgz_h
+
+
+        return dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm
 
     # get direction cosine matrix from gyroscopemeter
     def DCM_calculate(self, wxp, wyp, wzp, wx, wy, wz, bgx_h, bgy_h, bgz_h, QE_B_m):

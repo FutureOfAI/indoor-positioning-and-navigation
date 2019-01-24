@@ -42,6 +42,11 @@ gyro_bias_flag = 1
 # EKF Initial params
 r2d = 180/np.pi
 d2r = np.pi/180
+
+w_EB_B_xm = 0
+w_EB_B_ym = 0
+w_EB_B_zm = 0
+
 # Euler error in deg
 phierr = 0*0.5
 thetaerr = -0*0.5
@@ -58,10 +63,10 @@ bgz_h = 0
 dq11 = 0
 dq21 =0 
 dq31 = 0
-q1 = np.sqrt(1-np.square(dq11)-np.square(dq21)-np.square(dq31))
 q2 = -dq11
 q3 = -dq21
 q4 = -dq31
+q1 = np.sqrt(1-np.square(q2)-np.square(q3)-np.square(q4))
 dQerr = Quaternion(q1, q2, q3, q4)
 Q_E_B = Quaternion(1, 0, 0, 0)
 QE_B_m = dQerr.normalised * Q_E_B.normalised
@@ -101,6 +106,16 @@ s6_Q_z[3,3] = np.square(sig_x_rrw)
 s6_Q_z[4,4] = np.square(sig_y_rrw)
 s6_Q_z[5,5] = np.square(sig_z_rrw)
 
+s6_H = np.zeros([3,6])
+s6_H[0,0] = 1
+s6_H[1,1] = 1
+s6_H[2,2] = 1
+
+s6_R = np.zeros([3,3])
+s6_R[0,0] = np.square(0.5*d2r)
+s6_R[1,1] = np.square(0.5*d2r)
+s6_R[2,2] = np.square(2.5*d2r)
+
 # IMU Thread
 class Get_IMU_Data(threading.Thread):
 	def __init__(self, t_name, queue):
@@ -111,8 +126,6 @@ class Get_IMU_Data(threading.Thread):
 			if imu.IMURead():
 				data = imu.getIMUData()
 				acc = data["accel"]
-				# save last gyro data
-				grop = gro
 				gro = data["gyro"]
 				mag = data["compass"]
 			time.sleep(0.01)
@@ -135,11 +148,20 @@ class EKF_Cal_Euler(threading.Thread):
 	def run(self):
 		while True:
 			# predict
-			s6_P00_z = ekf6.Predict(grop[0], grop[1], grop[2], gro[0], gro[1], gro[2], bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z)
+			s6_P00_z, QE_B_m = ekf6.Predict(w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, gro[0], gro[1], gro[2], bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z)
 			# update
-			s6_P00_z, s6_z_update = ekf6.Update(acc[0], acc[1], acc[2], mag[0], mag[1], mag[2], )
+			s6_P00_z, s6_z_update = ekf6.Update(acc[0], acc[1], acc[2], mag[0], mag[1], mag[2], s6_P00_z, s6_H, s6_R)
 			# measurement
-
+			dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm = ekf6.Measurement(dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, s6_z_update, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm)
+			# calculate euler angle
+			q2 = -dtheda_xh/2
+			q3 = -dtheda_yh/2
+			q4 = -dtheda_zh/2
+			q1 = np.sqrt(1-np.square(q2)-np.square(q3)-np.square(q4))
+			dQ2 = Quaternion(q1, q2, q3, q4)
+			QE_B_m = dQ2.normalised * QE_B_m.normalised
+			Angle = ekf6.quatern2euler(QE_B_m)
+			print Angle
 			time.sleep(0.01)
 
 # main Thread
