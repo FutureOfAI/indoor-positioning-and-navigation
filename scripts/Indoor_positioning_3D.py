@@ -110,7 +110,7 @@ sig_y_rrw = gyro_err_flag*0.02/3600
 sig_z_rrw = gyro_err_flag*0.02/3600
 
 s6_Q_z = np.zeros([6,6])
-Q_factor = 1
+Q_factor = 0.1
 s6_Q_z[0,0] = Q_factor*np.square(sig_x_arw)
 s6_Q_z[1,1] = Q_factor*np.square(sig_y_arw)
 s6_Q_z[2,2] = Q_factor*np.square(sig_z_arw)
