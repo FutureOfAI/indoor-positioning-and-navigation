@@ -153,7 +153,7 @@ class Get_UWB_Data(threading.Thread):
 	def run(self):
 		while True:
 			#print ("task-UWB")
-			time.sleep(1)
+			#time.sleep(1)
 
 # 6-states EKF thread
 class EKF_Cal_Euler(threading.Thread):
@@ -186,10 +186,10 @@ class EKF_Cal_Euler(threading.Thread):
 # main Thread
 def main():
 	queue = Queue()
-	#imu = Get_IMU_Data('IMU.', queue)
+	imu = Get_IMU_Data('IMU.', queue)
 	uwb = Get_UWB_Data('UWB.', queue)
 	euler = EKF_Cal_Euler('Euler.',queue)
-	#imu.start()
+	imu.start()
 ##	uwb.start()
 	euler.start()
 	imu.join()
