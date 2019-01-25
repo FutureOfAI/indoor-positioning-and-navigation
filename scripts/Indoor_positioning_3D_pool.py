@@ -145,7 +145,7 @@ class Get_IMU_Data(threading.Thread):
 				acc = data["accel"]
 				gro = data["gyro"]
 				mag = data["compass"]
-			time.sleep(poll_interval*1/1000)
+			time.sleep(0.01)
 
 # DWM Thread
 class Get_UWB_Data(threading.Thread):
@@ -167,7 +167,7 @@ class EKF_Cal_Euler(threading.Thread):
 	def run(self):
 		while True:
 			global w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, bgx_h, bgy_h, bgz_h, QE_B_m, s6_P00_z, dtheda_xh, dtheda_yh, dtheda_zh
-			start_time = time.time()
+			#start_time = time.time()
 			# predict
 			s6_P00_z, QE_B_m = ekf6.Predict(w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, gro[0], gro[1], gro[2], bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z)
 			# update
@@ -183,7 +183,7 @@ class EKF_Cal_Euler(threading.Thread):
 			QE_B_m = dQ2.normalised * QE_B_m.normalised
 			Angle = ekf6.quatern2euler(QE_B_m)
 			print (Angle*r2d)
-			end_time = time.time()
+			#end_time = time.time()
 			#print (psutil.cpu_percent())
 			#print (end_time-start_time)
 			time.sleep(0.01)
@@ -207,7 +207,7 @@ class ThreadPool:
 
 # main Thread
 def main():
-	pool = ThreadPool(20)
+	pool = ThreadPool(8)
 	pool.wait_completion()
 	print ('All threads terminate!')
 
