@@ -148,7 +148,7 @@ class Get_IMU_Data(threading.Thread):
 				mag = data["compass"]
 			else:
 				print ("IMU Failed!")
-			time.sleep(0.1)
+			time.sleep(0.05)
 
 # DWM Thread
 class Get_UWB_Data(threading.Thread):
@@ -183,7 +183,7 @@ class EKF_Cal_Euler(threading.Thread):
 			QE_B_m = dQ2.normalised * QE_B_m.normalised
 			Angle = ekf6.quatern2euler(QE_B_m)
 			print (Angle*r2d)
-			time.sleep(0.1)
+			time.sleep(0.02)
 
 # main Thread
 def main():
