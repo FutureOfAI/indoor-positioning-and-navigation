@@ -110,7 +110,7 @@ sig_y_rrw = gyro_err_flag*0.02/3600
 sig_z_rrw = gyro_err_flag*0.02/3600
 
 s6_Q_z = np.zeros([6,6])
-Q_factor = 100
+Q_factor = 5
 s6_Q_z[0,0] = Q_factor*np.square(sig_x_arw)
 s6_Q_z[1,1] = Q_factor*np.square(sig_y_arw)
 s6_Q_z[2,2] = Q_factor*np.square(sig_z_arw)
@@ -148,7 +148,7 @@ class Get_IMU_Data(threading.Thread):
 				mag = data["compass"]
 			else:
 				print ("IMU Failed!")
-			time.sleep(0.1)
+			time.sleep(0.01)
 
 # DWM Thread
 class Get_UWB_Data(threading.Thread):
@@ -183,7 +183,7 @@ class EKF_Cal_Euler(threading.Thread):
 			QE_B_m = dQ2.normalised * QE_B_m.normalised
 			Angle = ekf6.quatern2euler(QE_B_m)
 			print (Angle*r2d)
-			time.sleep(0.1)
+			time.sleep(0.01)
 
 # main Thread
 def main():
