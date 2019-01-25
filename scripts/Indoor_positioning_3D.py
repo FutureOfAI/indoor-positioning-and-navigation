@@ -110,12 +110,13 @@ sig_y_rrw = gyro_err_flag*0.02/3600
 sig_z_rrw = gyro_err_flag*0.02/3600
 
 s6_Q_z = np.zeros([6,6])
-s6_Q_z[0,0] = np.square(sig_x_arw)
-s6_Q_z[1,1] = np.square(sig_y_arw)
-s6_Q_z[2,2] = np.square(sig_z_arw)
-s6_Q_z[3,3] = np.square(sig_x_rrw)
-s6_Q_z[4,4] = np.square(sig_y_rrw)
-s6_Q_z[5,5] = np.square(sig_z_rrw)
+Q_factor = 10
+s6_Q_z[0,0] = Q_factor*np.square(sig_x_arw)
+s6_Q_z[1,1] = Q_factor*np.square(sig_y_arw)
+s6_Q_z[2,2] = Q_factor*np.square(sig_z_arw)
+s6_Q_z[3,3] = Q_factor*np.square(sig_x_rrw)
+s6_Q_z[4,4] = Q_factor*np.square(sig_y_rrw)
+s6_Q_z[5,5] = Q_factor*np.square(sig_z_rrw)
 
 s6_H = np.zeros([3,6])
 s6_H[0,0] = 1
@@ -123,9 +124,10 @@ s6_H[1,1] = 1
 s6_H[2,2] = 1
 
 s6_R = np.zeros([3,3])
-s6_R[0,0] = 0.05*np.square(0.5*d2r)
-s6_R[1,1] = 0.05*np.square(0.5*d2r)
-s6_R[2,2] = 0.05*np.square(2.5*d2r)
+R_factor = 0.1
+s6_R[0,0] = R_factor*np.square(0.5*d2r)
+s6_R[1,1] = R_factor*np.square(0.5*d2r)
+s6_R[2,2] = R_factor*np.square(2.5*d2r)
 
 # IMU Thread
 class Get_IMU_Data(threading.Thread):
