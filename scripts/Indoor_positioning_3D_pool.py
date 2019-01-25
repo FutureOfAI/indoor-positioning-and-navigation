@@ -133,9 +133,9 @@ s6_R[2,2] = R_factor*np.square(2.5*d2r)
 
 # IMU Thread
 class Get_IMU_Data(threading.Thread):
-	def __init__(self, t_name, queue):
-		threading.Thread.__init__(self, name = t_name)
-		self.data = queue
+	def __init__(self, tasks):
+		threading.Thread.__init__(self)
+		self.tasks = tasks
 	def run(self):
 		global acc, gro, mag
 		while True:
@@ -148,9 +148,9 @@ class Get_IMU_Data(threading.Thread):
 
 # DWM Thread
 class Get_UWB_Data(threading.Thread):
-	def __init__(self, t_name, queue):
-		threading.Thread.__init__(self, name = t_name)
-		self.data = queue
+	def __init__(self, tasks):
+		threading.Thread.__init__(self)
+		self.tasks = tasks
 	def run(self):
 		while True:
 			#print ("task-UWB")
@@ -158,9 +158,9 @@ class Get_UWB_Data(threading.Thread):
 
 # 6-states EKF thread
 class EKF_Cal_Euler(threading.Thread):
-	def __init__(self, t_name, queue):
-		threading.Thread.__init__(self, name = t_name)
-		self.data = queue
+	def __init__(self, tasks):
+		threading.Thread.__init__(self)
+		self.tasks = tasks
 	def run(self):
 		while True:
 			global w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, bgx_h, bgy_h, bgz_h, QE_B_m, s6_P00_z, dtheda_xh, dtheda_yh, dtheda_zh
@@ -188,9 +188,9 @@ class EKF_Cal_Euler(threading.Thread):
 # main Thread
 def main():
 	queue = Queue()
-	imu = Get_IMU_Data('IMU.', queue)
-	uwb = Get_UWB_Data('UWB.', queue)
-	euler = EKF_Cal_Euler('Euler.',queue)
+	imu = Get_IMU_Data(queue)
+	uwb = Get_UWB_Data(queue)
+	euler = EKF_Cal_Euler(queue)
 	imu.start()
 ##	uwb.start()
 	euler.start()
