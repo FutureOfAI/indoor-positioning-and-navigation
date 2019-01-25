@@ -143,7 +143,7 @@ class Get_IMU_Data(threading.Thread):
 				acc = data["accel"]
 				gro = data["gyro"]
 				mag = data["compass"]
-			#time.sleep(poll_interval/1000)
+			time.sleep(poll_interval*2/1000)
 
 # DWM Thread
 class Get_UWB_Data(threading.Thread):
