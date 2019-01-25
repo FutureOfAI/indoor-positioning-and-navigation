@@ -51,11 +51,11 @@ class EKF_6states(object):
         return s6_P00_z, QE_B_m
 
     def Update(self, ax, ay, az, mx, my, mz, QE_B_m, s6_P00_z, s6_H, s6_R):
-        #C_E_B_e = self.TRIAD(ax, ay, az, mx, my, mz)
-        #tmp = self.rotMat2euler(C_E_B_e.T)
-        #C_E_B_e = self.euler2rotMat(-tmp[1], tmp[0], tmp[2])
-        tmp = self.AccMag2euler(ax, ay, az, mx, my)
-        C_E_B_e = self.euler2rotMat(tmp[0],tmp[1],tmp[2])
+        C_E_B_e = self.TRIAD(ax, ay, az, mx, my, mz)
+        tmp = self.rotMat2euler(C_E_B_e.T)
+        C_E_B_e = self.euler2rotMat(-tmp[1], tmp[0], tmp[2])
+        # tmp = self.AccMag2euler(ax, ay, az, mx, my)
+        # C_E_B_e = self.euler2rotMat(tmp[0],tmp[1],tmp[2])
         Q_E_B_e = self.rotMat2quatern(C_E_B_e)
 
         Q_B_E_m = Quaternion(QE_B_m[0], -QE_B_m[1], -QE_B_m[2], -QE_B_m[3])
