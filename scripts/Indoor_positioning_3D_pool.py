@@ -188,17 +188,28 @@ class EKF_Cal_Euler(threading.Thread):
 			print (end_time-start_time)
 			#time.sleep(0.5)
 
+class ThreadPool:
+	"""Pool of threads consuming tasks from a queue"""
+	def __init__(self, num_threads):
+		self.tasks = Queue(num_threads)
+		while True:
+			Get_IMU_Data(self.tasks)
+			Get_UWB_Data(self.tasks)
+			EKF_Cal_Euler(self.tasks)
+
+	def add_task(self, func, *args, **kargs):
+		"""Add a task to the queue"""
+		self.tasks.put((func, args, kargs))
+
+	def wait_completion(self):
+		"""Wait for completion of all the tasks in the queue"""
+		self.tasks.join()
+
 # main Thread
 def main():
-	queue = Queue()
-	imu = Get_IMU_Data(queue)
-	uwb = Get_UWB_Data(queue)
-	euler = EKF_Cal_Euler(queue)
-	imu.join()
-##	uwb.join()
-	euler.join()
+	pool = ThreadPool(4)
+	pool.wait_completion()
 	print ('All threads terminate!')
-
 
 if __name__ == '__main__':
 	main()
