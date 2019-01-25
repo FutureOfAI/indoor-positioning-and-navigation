@@ -163,6 +163,7 @@ class EKF_Cal_Euler(threading.Thread):
 	def run(self):
 		while True:
 			global w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, bgx_h, bgy_h, bgz_h, QE_B_m, s6_P00_z, dtheda_xh, dtheda_yh, dtheda_zh
+			start_time = time.time()
 			# predict
 			s6_P00_z, QE_B_m = ekf6.Predict(w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, gro[0], gro[1], gro[2], bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z)
 			# update
@@ -177,7 +178,9 @@ class EKF_Cal_Euler(threading.Thread):
 			dQ2 = Quaternion(q1, q2, q3, q4)
 			QE_B_m = dQ2.normalised * QE_B_m.normalised
 			Angle = ekf6.quatern2euler(QE_B_m)
-			print (Angle*r2d)
+			#print (Angle*r2d)
+			end_time = time.time()
+			print (end_time-start_time)
 			time.sleep(0.001)
 
 # main Thread
