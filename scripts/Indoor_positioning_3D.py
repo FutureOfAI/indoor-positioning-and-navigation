@@ -178,7 +178,7 @@ class EKF_Cal_Euler(threading.Thread):
 			QE_B_m = dQ2.normalised * QE_B_m.normalised
 			Angle = ekf6.quatern2euler(QE_B_m)
 			print (Angle*r2d)
-			time.sleep(0.01)
+			time.sleep(0.001)
 
 # main Thread
 def main():
