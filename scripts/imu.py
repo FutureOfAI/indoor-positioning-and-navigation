@@ -71,8 +71,6 @@ imu.setCompassEnable(True)
 
 poll_interval = imu.IMUGetPollInterval()
 
-print (poll_interval)
-
 # data variables
 roll = 0.0
 pitch = 0.0
@@ -212,6 +210,7 @@ while True:
             #print ekf6.DCM_calculate()
             lcd.clear()
             lcd.message(imu_sentence)
+            print (poll_interval)
 
             t_print = hack
 
