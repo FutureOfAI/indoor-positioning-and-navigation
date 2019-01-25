@@ -146,7 +146,7 @@ class Get_IMU_Data(threading.Thread):
 				acc = data["accel"]
 				gro = data["gyro"]
 				mag = data["compass"]
-				print (acc)
+				print (gro)
 			else:
 				print ("IMU Failed!")
 			time.sleep(0.01)
