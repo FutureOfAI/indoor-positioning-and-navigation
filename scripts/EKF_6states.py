@@ -50,12 +50,13 @@ class EKF_6states(object):
 
         return s6_P00_z, QE_B_m
 
-    def Update(self, ax, ay, az, mx, my, mz, s6_P00_z, s6_H, s6_R):
+    def Update(self, ax, ay, az, mx, my, mz, QE_B_m, s6_P00_z, s6_H, s6_R):
         C_E_B_e = self.TRIAD(ax, ay, az, mx, my, mz)
         tmp = self.rotMat2euler(C_E_B_e.T)
         C_E_B_e = self.euler2rotMat(-tmp[1], tmp[0], tmp[2])
         Q_E_B_e = self.rotMat2quatern(C_E_B_e)
-        Q_B_E_m = Q_E_B_e.conjugate
+
+        Q_B_E_m = Quaternion(QE_B_m[0], -QE_B_m[1], -QE_B_m[2], -QE_B_m[3])
         dQ = Q_E_B_e.normalised * Q_B_E_m.normalised
         d_theta = self.quatern2euler(dQ.normalised)
         # Form the measurement residuals or mu
@@ -71,9 +72,9 @@ class EKF_6states(object):
 
     def Measurement(self, dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, s6_z_update, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm):
 
-        dtheda_xh = dtheda_xh + s6_z_update[0]
-        dtheda_yh = dtheda_yh + s6_z_update[1]
-        dtheda_zh = dtheda_zh + s6_z_update[2]
+        dtheda_xh = s6_z_update[0]
+        dtheda_yh = s6_z_update[1]
+        dtheda_zh = s6_z_update[2]
 
         bgx_h = bgx_h + s6_z_update[3]
         bgy_h = bgy_h + s6_z_update[4]
@@ -108,8 +109,7 @@ class EKF_6states(object):
 
         delta_Q = Quaternion(q1, -q2, -q3, -q4)
         QE_B_m = delta_Q.normalised * QE_B_m.normalised
-        DC_E_B_m = QE_B_m.rotation_matrix
-
+        DC_E_B_m = self.quatern2rotMat(QE_B_m)
         return DC_E_B_m, QE_B_m
 
     # Get Rotation matrix from euler angle in rad

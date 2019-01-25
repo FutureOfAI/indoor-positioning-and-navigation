@@ -18,17 +18,17 @@ from numpy import linalg as LA
 import EKF_6states as EKF6
 from Queue import Queue
 
-grox_test = np.array([0,0.0027,0.0027])
-groy_test = np.array([0,0.0055,0.0055])
-groz_test = np.array([0,0.0082,0.0082])
+grox_test = np.array([0,0.002741556236919,0.002741555560467])
+groy_test = np.array([0,0.005483112473838,0.005483111120934])
+groz_test = np.array([0,0.008224668710756,0.008224666681400])
 
-accx_test = np.array([0,-0.0011,-0.0016])
-accy_test = np.array([0,0.0005,0.0008])
+accx_test = np.array([0,-0.001074778557705,-0.001612233961899])
+accy_test = np.array([0,0.0005371683061720239,0.0008056197943218936])
 accz_test = np.array([-9.8,-9.8,-9.8])
 
-magx_test = np.array([2.8773,2.8684,2.8639])
-magy_test = np.array([35.9974,35.9994,36.0004])
-magz_test = np.array([-27.6598,-27.6582,-27.6573])
+magx_test = np.array([2.877312458709545,2.868357795017813,2.863880397500370])
+magy_test = np.array([35.997397931215560,35.999386810200676,36.000380469412846])
+magz_test = np.array([27.659836572125170,27.658178118764624,27.657348736390680])
 
 acc = np.zeros(3)
 gro = np.zeros(3)
@@ -71,9 +71,9 @@ bgx_h = 0
 bgy_h = 0
 bgz_h = 0
 
-dq11 = 0
-dq21 =0
-dq31 = 0
+dq11 = -dtheda_xh/2
+dq21 = -dtheda_yh/2
+dq31 = -dtheda_zh/2
 q2 = -dq11
 q3 = -dq21
 q4 = -dq31
@@ -127,6 +127,8 @@ s6_R[0,0] = np.square(0.5*d2r)
 s6_R[1,1] = np.square(0.5*d2r)
 s6_R[2,2] = np.square(2.5*d2r)
 
+i = 1
+
 # IMU Thread
 class Get_IMU_Data(threading.Thread):
 	def __init__(self, t_name, queue):
@@ -134,7 +136,7 @@ class Get_IMU_Data(threading.Thread):
 		self.data = queue
 	def run(self):
 		global acc, gro, mag
-##		for i in range(0,3):
+##		for i in range(0,1):
 ##			acc = [accx_test[i], accy_test[i], accz_test[i]]
 ##			gro = [grox_test[i], groy_test[i], groz_test[i]]
 ##			mag = [magx_test[i], magy_test[i], magz_test[i]]
@@ -164,12 +166,15 @@ class EKF_Cal_Euler(threading.Thread):
 		threading.Thread.__init__(self, name = t_name)
 		self.data = queue
 	def run(self):
-		while True:
+		if True:
 			global w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, bgx_h, bgy_h, bgz_h, QE_B_m, s6_P00_z, dtheda_xh, dtheda_yh, dtheda_zh
+			acc = [accx_test[i], accy_test[i], accz_test[i]]
+			gro = [grox_test[i], groy_test[i], groz_test[i]]
+			mag = [magx_test[i], magy_test[i], magz_test[i]]
 			# predict
 			s6_P00_z, QE_B_m = ekf6.Predict(w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, gro[0], gro[1], gro[2], bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z)
 			# update
-			s6_P00_z, s6_z_update = ekf6.Update(acc[0], acc[1], acc[2], mag[0], mag[1], mag[2], s6_P00_z, s6_H, s6_R)
+			s6_P00_z, s6_z_update = ekf6.Update(acc[0], acc[1], acc[2], mag[0], mag[1], mag[2], QE_B_m, s6_P00_z, s6_H, s6_R)
 			# measurement
 			dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm = ekf6.Measurement(dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, s6_z_update, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm)
 			# calculate euler angle
