@@ -137,10 +137,6 @@ class Get_IMU_Data(threading.Thread):
 		self.data = queue
 	def run(self):
 		global acc, gro, mag
-##		for i in range(0,1):
-##			acc = [accx_test[i], accy_test[i], accz_test[i]]
-##			gro = [grox_test[i], groy_test[i], groz_test[i]]
-##			mag = [magx_test[i], magy_test[i], magz_test[i]]
 		while True:
 			if imu.IMURead():
 				data = imu.getIMUData()
@@ -182,7 +178,7 @@ class EKF_Cal_Euler(threading.Thread):
 			dQ2 = Quaternion(q1, q2, q3, q4)
 			QE_B_m = dQ2.normalised * QE_B_m.normalised
 			Angle = ekf6.quatern2euler(QE_B_m)
-			#print (Angle*r2d)
+			print (Angle*r2d)
 			time.sleep(0.01)
 
 # main Thread
