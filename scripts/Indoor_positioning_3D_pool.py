@@ -136,6 +136,7 @@ class Get_IMU_Data(threading.Thread):
 	def __init__(self, tasks):
 		threading.Thread.__init__(self)
 		self.tasks = tasks
+		self.start()
 	def run(self):
 		global acc, gro, mag
 		while True:
@@ -151,6 +152,7 @@ class Get_UWB_Data(threading.Thread):
 	def __init__(self, tasks):
 		threading.Thread.__init__(self)
 		self.tasks = tasks
+		self.start()
 	def run(self):
 		while True:
 			#print ("task-UWB")
@@ -161,6 +163,7 @@ class EKF_Cal_Euler(threading.Thread):
 	def __init__(self, tasks):
 		threading.Thread.__init__(self)
 		self.tasks = tasks
+		self.start()
 	def run(self):
 		while True:
 			global w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, bgx_h, bgy_h, bgz_h, QE_B_m, s6_P00_z, dtheda_xh, dtheda_yh, dtheda_zh
@@ -181,8 +184,8 @@ class EKF_Cal_Euler(threading.Thread):
 			Angle = ekf6.quatern2euler(QE_B_m)
 			#print (Angle*r2d)
 			end_time = time.time()
-			print (psutil.cpu_percent())
-			#print (end_time-start_time)
+			#print (psutil.cpu_percent())
+			print (end_time-start_time)
 			#time.sleep(0.5)
 
 # main Thread
@@ -191,9 +194,6 @@ def main():
 	imu = Get_IMU_Data(queue)
 	uwb = Get_UWB_Data(queue)
 	euler = EKF_Cal_Euler(queue)
-	imu.start()
-##	uwb.start()
-	euler.start()
 	imu.join()
 ##	uwb.join()
 	euler.join()
