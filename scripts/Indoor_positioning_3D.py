@@ -147,7 +147,7 @@ class Get_IMU_Data(threading.Thread):
 				acc = data["accel"]
 				gro = data["gyro"]
 				mag = data["compass"]
-				print (acc)
+				print (mag)
 			time.sleep(poll_interval/1000)
 
 # DWM Thread
@@ -168,12 +168,6 @@ class EKF_Cal_Euler(threading.Thread):
 	def run(self):
 		while True:
 			global w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, bgx_h, bgy_h, bgz_h, QE_B_m, s6_P00_z, dtheda_xh, dtheda_yh, dtheda_zh
-			# if imu.IMURead():
-			# 	data = imu.getIMUData()
-			# 	acc = data["accel"]
-			# 	gro = data["gyro"]
-			# 	mag = data["compass"]
-			# 	print (acc)
 			# predict
 			s6_P00_z, QE_B_m = ekf6.Predict(w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, gro[0], gro[1], gro[2], bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z)
 			# update
