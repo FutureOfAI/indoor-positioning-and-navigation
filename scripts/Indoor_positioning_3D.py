@@ -186,10 +186,10 @@ class EKF_Cal_Euler(threading.Thread):
 # main Thread
 def main():
 	queue = Queue()
-	imu = Get_IMU_Data('IMU.', queue)
+	#imu = Get_IMU_Data('IMU.', queue)
 	uwb = Get_UWB_Data('UWB.', queue)
 	euler = EKF_Cal_Euler('Euler.',queue)
-	imu.start()
+	#imu.start()
 ##	uwb.start()
 	euler.start()
 	imu.join()
