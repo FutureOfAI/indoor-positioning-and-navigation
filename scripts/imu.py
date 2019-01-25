@@ -210,7 +210,6 @@ while True:
             #print ekf6.DCM_calculate()
             lcd.clear()
             lcd.message(imu_sentence)
-            print (poll_interval)
 
             t_print = hack
 

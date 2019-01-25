@@ -46,6 +46,7 @@ if (not imu.IMUInit()):
 imu.setGyroEnable(True)
 imu.setAccelEnable(True)
 imu.setCompassEnable(True)
+poll_interval = imu.IMUGetPollInterval()
 
 gyro_err_flag = 0
 gyro_bias_flag = 0
@@ -146,10 +147,10 @@ class Get_IMU_Data(threading.Thread):
 				acc = data["accel"]
 				gro = data["gyro"]
 				mag = data["compass"]
-				print (mag)
+				print (acc)
 			else:
 				print ("IMU Failed!")
-			time.sleep(0.01)
+			time.sleep(poll_interval/1000)
 
 # DWM Thread
 class Get_UWB_Data(threading.Thread):
