@@ -184,8 +184,8 @@ class EKF_Cal_Euler(threading.Thread):
 			Angle = ekf6.quatern2euler(QE_B_m)
 			#print (Angle*r2d)
 			end_time = time.time()
-			#print (psutil.cpu_percent())
-			print (end_time-start_time)
+			print (psutil.cpu_percent())
+			#print (end_time-start_time)
 			#time.sleep(0.5)
 
 class ThreadPool:
@@ -207,7 +207,7 @@ class ThreadPool:
 
 # main Thread
 def main():
-	pool = ThreadPool(4)
+	pool = ThreadPool(20)
 	pool.wait_completion()
 	print ('All threads terminate!')
 
