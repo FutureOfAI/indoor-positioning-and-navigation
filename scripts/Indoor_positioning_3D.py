@@ -143,7 +143,7 @@ class Get_IMU_Data(threading.Thread):
 				acc = data["accel"]
 				gro = data["gyro"]
 				mag = data["compass"]
-			time.sleep(poll_interval/1000)
+			#time.sleep(poll_interval/1000)
 
 # DWM Thread
 class Get_UWB_Data(threading.Thread):
@@ -181,7 +181,7 @@ class EKF_Cal_Euler(threading.Thread):
 			#print (Angle*r2d)
 			end_time = time.time()
 			print (end_time-start_time)
-			time.sleep(0.5)
+			#time.sleep(0.5)
 
 # main Thread
 def main():
