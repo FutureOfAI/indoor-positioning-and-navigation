@@ -152,6 +152,7 @@ class Get_UWB_Data(threading.Thread):
 		self.data = queue
 	def run(self):
 		while True:
+			pass
 			#print ("task-UWB")
 			#time.sleep(1)
 
