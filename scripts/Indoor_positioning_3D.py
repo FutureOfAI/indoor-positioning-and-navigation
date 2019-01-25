@@ -126,7 +126,7 @@ s6_H[1,1] = 1
 s6_H[2,2] = 1
 
 s6_R = np.zeros([3,3])
-R_factor = 0.1
+R_factor = 0.01
 s6_R[0,0] = R_factor*np.square(0.5*d2r)
 s6_R[1,1] = R_factor*np.square(0.5*d2r)
 s6_R[2,2] = R_factor*np.square(2.5*d2r)
