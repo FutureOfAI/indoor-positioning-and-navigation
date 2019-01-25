@@ -17,6 +17,7 @@ from pyquaternion import Quaternion
 from numpy import linalg as LA
 import EKF_6states as EKF6
 from Queue import Queue
+import psutil
 
 grox_test = np.array([0,0.002741556236919,0.002741555560467])
 groy_test = np.array([0,0.005483112473838,0.005483111120934])
@@ -179,8 +180,9 @@ class EKF_Cal_Euler(threading.Thread):
 			dQ2 = Quaternion(q1, q2, q3, q4)
 			QE_B_m = dQ2.normalised * QE_B_m.normalised
 			Angle = ekf6.quatern2euler(QE_B_m)
-			print (Angle*r2d)
+			#print (Angle*r2d)
 			end_time = time.time()
+			print (psutil.cpu_percent(), psutil.virtual_memory())
 			#print (end_time-start_time)
 			#time.sleep(0.5)
 
