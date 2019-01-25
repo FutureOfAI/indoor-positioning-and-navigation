@@ -148,8 +148,6 @@ class Get_IMU_Data(threading.Thread):
 				gro = data["gyro"]
 				mag = data["compass"]
 				print (acc)
-			else:
-				print ("IMU Failed!")
 			time.sleep(poll_interval/1000)
 
 # DWM Thread
@@ -170,28 +168,28 @@ class EKF_Cal_Euler(threading.Thread):
 	def run(self):
 		while True:
 			global w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, bgx_h, bgy_h, bgz_h, QE_B_m, s6_P00_z, dtheda_xh, dtheda_yh, dtheda_zh
-			if imu.IMURead():
-				data = imu.getIMUData()
-				acc = data["accel"]
-				gro = data["gyro"]
-				mag = data["compass"]
-				print (acc)
-				# predict
-				# s6_P00_z, QE_B_m = ekf6.Predict(w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, gro[0], gro[1], gro[2], bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z)
-				# # update
-				# s6_P00_z, s6_z_update = ekf6.Update(acc[0], acc[1], acc[2], mag[0], mag[1], mag[2], QE_B_m, s6_P00_z, s6_H, s6_R)
-				# # measurement
-				# dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm = ekf6.Measurement(dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, s6_z_update, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm)
-				# # calculate euler angle
-				# q2 = -dtheda_xh/2
-				# q3 = -dtheda_yh/2
-				# q4 = -dtheda_zh/2
-				# q1 = np.sqrt(1-np.square(q2)-np.square(q3)-np.square(q4))
-				# dQ2 = Quaternion(q1, q2, q3, q4)
-				# QE_B_m = dQ2.normalised * QE_B_m.normalised
-				# Angle = ekf6.quatern2euler(QE_B_m)
-				#print (Angle*r2d)
-			time.sleep(poll_interval/1000)
+			# if imu.IMURead():
+			# 	data = imu.getIMUData()
+			# 	acc = data["accel"]
+			# 	gro = data["gyro"]
+			# 	mag = data["compass"]
+			# 	print (acc)
+			# predict
+			s6_P00_z, QE_B_m = ekf6.Predict(w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, gro[0], gro[1], gro[2], bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z)
+			# update
+			s6_P00_z, s6_z_update = ekf6.Update(acc[0], acc[1], acc[2], mag[0], mag[1], mag[2], QE_B_m, s6_P00_z, s6_H, s6_R)
+			# measurement
+			dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm = ekf6.Measurement(dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, s6_z_update, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm)
+			# calculate euler angle
+			q2 = -dtheda_xh/2
+			q3 = -dtheda_yh/2
+			q4 = -dtheda_zh/2
+			q1 = np.sqrt(1-np.square(q2)-np.square(q3)-np.square(q4))
+			dQ2 = Quaternion(q1, q2, q3, q4)
+			QE_B_m = dQ2.normalised * QE_B_m.normalised
+			Angle = ekf6.quatern2euler(QE_B_m)
+			#print (Angle*r2d)
+			time.sleep(0.01)
 
 # main Thread
 def main():
@@ -199,10 +197,10 @@ def main():
 	imu = Get_IMU_Data('IMU.', queue)
 	uwb = Get_UWB_Data('UWB.', queue)
 	euler = EKF_Cal_Euler('Euler.',queue)
-	#imu.start()
+	imu.start()
 ##	uwb.start()
 	euler.start()
-	#imu.join()
+	imu.join()
 ##	uwb.join()
 	euler.join()
 	print ('All threads terminate!')
