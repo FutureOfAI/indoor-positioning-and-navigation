@@ -180,7 +180,7 @@ class EKF_Cal_Euler(threading.Thread):
 			dQ2 = Quaternion(q1, q2, q3, q4)
 			QE_B_m = dQ2.normalised * QE_B_m.normalised
 			Angle = ekf6.quatern2euler(QE_B_m)
-			print (Angle)
+			print (Angle*r2d)
 			time.sleep(0.01)
 
 # main Thread
