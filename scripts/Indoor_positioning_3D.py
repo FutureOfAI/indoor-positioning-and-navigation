@@ -184,7 +184,7 @@ class EKF_Cal_Euler(threading.Thread):
 			dt = end_time-start_time
 			print (2*Angle*r2d, dt)
 			#print (psutil.cpu_percent())
-			time.sleep(0.01)
+			time.sleep(0.02)
 
 # main Thread
 def main():
