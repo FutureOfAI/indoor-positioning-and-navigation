@@ -51,9 +51,11 @@ class EKF_6states(object):
         return s6_P00_z, QE_B_m
 
     def Update(self, ax, ay, az, mx, my, mz, QE_B_m, s6_P00_z, s6_H, s6_R):
-        C_E_B_e = self.TRIAD(ax, ay, az, mx, my, mz)
-        tmp = self.rotMat2euler(C_E_B_e.T)
-        C_E_B_e = self.euler2rotMat(-tmp[1], tmp[0], tmp[2])
+        #C_E_B_e = self.TRIAD(ax, ay, az, mx, my, mz)
+        #tmp = self.rotMat2euler(C_E_B_e.T)
+        #C_E_B_e = self.euler2rotMat(-tmp[1], tmp[0], tmp[2])
+        tmp = self.AccMag2euler(ax, ay, az, mx, my)
+        C_E_B_e = self.euler2rotMat(tmp[0],tmp[1],tmp[2])
         Q_E_B_e = self.rotMat2quatern(C_E_B_e)
 
         Q_B_E_m = Quaternion(QE_B_m[0], -QE_B_m[1], -QE_B_m[2], -QE_B_m[3])
@@ -209,6 +211,18 @@ class EKF_6states(object):
 
         C_E_B_e = M_B.dot(M_E.T)
         return C_E_B_e
+
+    def AccMag2euler(self,ax, ay, az, mx, my):
+        mag_E = np.array([self._Mag*np.cos(self._Angle_I)*np.sin(self._Angle_D), self._Mag*np.cos(self._Angle_I)*np.cos(self._Angle_D), -self._Mag*np.sin(self._Angle_I)])
+        if az != 0:
+            phi = -np.arctan(ay/az)
+            theta = -np.arctan(ax/np.sqrt(np.square(ay)+np.square(az)))
+        else:
+            phi = 0
+            theta = 0
+        psi = np.arctan2(my, mx) - arctan2(mag_E[1], mag_E[0])
+        euler = np.array([phi, theta, psi])
+        return euler
 
     def normalize(self, v):
         norm_v = np.linalg.norm(v)
