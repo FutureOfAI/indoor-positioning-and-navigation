@@ -71,6 +71,8 @@ imu.setCompassEnable(True)
 
 poll_interval = imu.IMUGetPollInterval()
 
+print (poll_interval)
+
 # data variables
 roll = 0.0
 pitch = 0.0
