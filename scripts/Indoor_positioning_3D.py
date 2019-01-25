@@ -104,15 +104,16 @@ s6_P00_z[3,3] = np.square(bgx0)
 s6_P00_z[4,4] = np.square(bgy0)
 s6_P00_z[5,5] = np.square(bgz0)
 
-sig_x_arw = gyro_err_flag*0.02
-sig_y_arw = gyro_err_flag*0.02
-sig_z_arw = gyro_err_flag*0.02
-sig_x_rrw = gyro_err_flag*0.02/3600
-sig_y_rrw = gyro_err_flag*0.02/3600
-sig_z_rrw = gyro_err_flag*0.02/3600
+sig_factor = 10000
+sig_x_arw = sig_factor*gyro_err_flag*0.02
+sig_y_arw = sig_factor*gyro_err_flag*0.02
+sig_z_arw = sig_factor*gyro_err_flag*0.02
+sig_x_rrw = sig_factor*gyro_err_flag*0.02/3600
+sig_y_rrw = sig_factor*gyro_err_flag*0.02/3600
+sig_z_rrw = sig_factor*gyro_err_flag*0.02/3600
 
 s6_Q_z = np.zeros([6,6])
-Q_factor = 100
+Q_factor = 100000
 s6_Q_z[0,0] = Q_factor*np.square(sig_x_arw)
 s6_Q_z[1,1] = Q_factor*np.square(sig_y_arw)
 s6_Q_z[2,2] = Q_factor*np.square(sig_z_arw)
