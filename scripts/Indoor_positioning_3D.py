@@ -127,8 +127,6 @@ s6_R[0,0] = np.square(0.5*d2r)
 s6_R[1,1] = np.square(0.5*d2r)
 s6_R[2,2] = np.square(2.5*d2r)
 
-i = 1
-
 # IMU Thread
 class Get_IMU_Data(threading.Thread):
 	def __init__(self, t_name, queue):
@@ -166,11 +164,8 @@ class EKF_Cal_Euler(threading.Thread):
 		threading.Thread.__init__(self, name = t_name)
 		self.data = queue
 	def run(self):
-		if True:
+		while True:
 			global w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, bgx_h, bgy_h, bgz_h, QE_B_m, s6_P00_z, dtheda_xh, dtheda_yh, dtheda_zh
-			acc = [accx_test[i], accy_test[i], accz_test[i]]
-			gro = [grox_test[i], groy_test[i], groz_test[i]]
-			mag = [magx_test[i], magy_test[i], magz_test[i]]
 			# predict
 			s6_P00_z, QE_B_m = ekf6.Predict(w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, gro[0], gro[1], gro[2], bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z)
 			# update
