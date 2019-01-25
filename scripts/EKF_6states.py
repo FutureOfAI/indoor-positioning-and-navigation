@@ -220,7 +220,7 @@ class EKF_6states(object):
         else:
             phi = 0
             theta = 0
-        psi = np.arctan2(my, mx) - arctan2(mag_E[1], mag_E[0])
+        psi = np.arctan2(my, mx) - np.arctan2(mag_E[1], mag_E[0])
         euler = np.array([phi, theta, psi])
         return euler
 
