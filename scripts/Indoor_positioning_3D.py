@@ -18,6 +18,18 @@ from numpy import linalg as LA
 import EKF_6states as EKF6
 from Queue import Queue
 
+grox_test = np.array([0,0.0027,0.0027])
+groy_test = np.array([0,0.0055,0.0055])
+groz_test = np.array([0,0.0082,0.0082])
+
+accx_test = np.array([0,-0.0011,-0.0016])
+accy_test = np.array([0,0.0005,0.0008])
+accz_test = np.array([-9.8,-9.8,-9.8])
+
+magx_test = np.array([2.8773,2.8684,2.8639])
+magy_test = np.array([35.9974,35.9994,36.0004])
+magz_test = np.array([-27.6598,-27.6582,-27.6573])
+
 acc = np.zeros(3)
 gro = np.zeros(3)
 mag = np.zeros(3)
@@ -35,8 +47,8 @@ imu.setGyroEnable(True)
 imu.setAccelEnable(True)
 imu.setCompassEnable(True)
 
-gyro_err_flag = 1
-gyro_bias_flag = 1
+gyro_err_flag = 0
+gyro_bias_flag = 0
 
 # EKF Initial params
 r2d = 180/np.pi
@@ -47,9 +59,9 @@ w_EB_B_ym = 0
 w_EB_B_zm = 0
 
 # Euler error in deg
-phierr = 0*0.5
-thetaerr = -0*0.5
-psierr = 0*0.5
+phierr = 1*0.5
+thetaerr = -1*0.5
+psierr = 10*0.5
 
 dtheda_xh = phierr*d2r
 dtheda_yh = thetaerr*d2r
@@ -121,6 +133,11 @@ class Get_IMU_Data(threading.Thread):
 		threading.Thread.__init__(self, name = t_name)
 		self.data = queue
 	def run(self):
+		global acc, gro, mag
+##		for i in range(0,3):
+##			acc = [accx_test[i], accy_test[i], accz_test[i]]
+##			gro = [grox_test[i], groy_test[i], groz_test[i]]
+##			mag = [magx_test[i], magy_test[i], magz_test[i]]
 		while True:
 			if imu.IMURead():
 				data = imu.getIMUData()
@@ -128,7 +145,7 @@ class Get_IMU_Data(threading.Thread):
 				gro = data["gyro"]
 				mag = data["compass"]
 			else:
-				print "IMU Failed!"
+				print ("IMU Failed!")
 			time.sleep(0.01)
 
 # DWM Thread
@@ -173,10 +190,10 @@ def main():
 	uwb = Get_UWB_Data('UWB.', queue)
 	euler = EKF_Cal_Euler('Euler.',queue)
 	imu.start()
-	uwb.start()
+##	uwb.start()
 	euler.start()
 	imu.join()
-	uwb.join()
+##	uwb.join()
 	euler.join()
 	print ('All threads terminate!')
 
