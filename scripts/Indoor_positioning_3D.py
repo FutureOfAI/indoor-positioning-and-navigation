@@ -123,9 +123,9 @@ s6_H[1,1] = 1
 s6_H[2,2] = 1
 
 s6_R = np.zeros([3,3])
-s6_R[0,0] = 0.1*np.square(0.5*d2r)
-s6_R[1,1] = 0.1*np.square(0.5*d2r)
-s6_R[2,2] = 0.1*np.square(2.5*d2r)
+s6_R[0,0] = 0.05*np.square(0.5*d2r)
+s6_R[1,1] = 0.05*np.square(0.5*d2r)
+s6_R[2,2] = 0.05*np.square(2.5*d2r)
 
 # IMU Thread
 class Get_IMU_Data(threading.Thread):
