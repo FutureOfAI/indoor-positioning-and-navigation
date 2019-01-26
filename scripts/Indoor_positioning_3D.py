@@ -113,7 +113,7 @@ sig_y_rrw = sig_factor*gyro_err_flag*0.02/3600
 sig_z_rrw = sig_factor*gyro_err_flag*0.02/3600
 
 s6_Q_z = np.zeros([6,6])
-Q_factor = 100000
+Q_factor = 0.1
 s6_Q_z[0,0] = Q_factor*np.square(sig_x_arw)
 s6_Q_z[1,1] = Q_factor*np.square(sig_y_arw)
 s6_Q_z[2,2] = Q_factor*np.square(sig_z_arw)
@@ -127,7 +127,7 @@ s6_H[1,1] = 1
 s6_H[2,2] = 1
 
 s6_R = np.zeros([3,3])
-R_factor = 0.0001
+R_factor = 0.1
 s6_R[0,0] = R_factor*np.square(0.5*d2r)
 s6_R[1,1] = R_factor*np.square(0.5*d2r)
 s6_R[2,2] = R_factor*np.square(2.5*d2r)
