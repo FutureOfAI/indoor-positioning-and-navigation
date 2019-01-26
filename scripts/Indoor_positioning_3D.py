@@ -433,7 +433,7 @@ class EKF_Cal_Euler(threading.Thread):
 			Angle = ekf6.quatern2euler(QE_B_m)
 			EKF_end_time = time.time()
 			dt = EKF_start_time-EKF_end_time
-			#print (Angle*r2d, dt)
+			print (Angle*r2d, dt)
 			#print (psutil.cpu_percent())
 			time.sleep(0.01)
 
@@ -468,18 +468,18 @@ def main():
 	noteActivity()
 
 	queue = Queue()
-	# imu = Get_IMU_Data('IMU.', queue)
+	imu = Get_IMU_Data('IMU.', queue)
 	uwb = Get_UWB_Data('UWB.', queue)
-	# euler = EKF_Cal_Euler('Euler.',queue)
-	# dataS = Save_Data('Save Data', queue)
-	# imu.start()
+	euler = EKF_Cal_Euler('Euler.',queue)
+	dataS = Save_Data('Save Data', queue)
+	imu.start()
 	uwb.start()
-	# euler.start()
-	# dataS.start()
-	# imu.join()
+	euler.start()
+	dataS.start()
+	imu.join()
 	uwb.join()
-	# euler.join()
-	# dataS.join()
+	euler.join()
+	dataS.join()
 	print ('All threads terminate!')
 
 
