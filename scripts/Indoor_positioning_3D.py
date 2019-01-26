@@ -18,7 +18,9 @@ from numpy import linalg as LA
 import EKF_6states as EKF6
 from Queue import Queue
 import psutil
+import csv
 
+# Matlab algorithm test data 
 grox_test = np.array([0,0.002741556236919,0.002741555560467])
 groy_test = np.array([0,0.005483112473838,0.005483111120934])
 groz_test = np.array([0,0.008224668710756,0.008224666681400])
@@ -30,15 +32,16 @@ accz_test = np.array([-9.8,-9.8,-9.8])
 magx_test = np.array([2.877312458709545,2.868357795017813,2.863880397500370])
 magy_test = np.array([35.997397931215560,35.999386810200676,36.000380469412846])
 magz_test = np.array([27.659836572125170,27.658178118764624,27.657348736390680])
-
+# IMU initial params
 acc = np.zeros(3)
+grop = np.zeros(3)
 gro = np.zeros(3)
 mag = np.zeros(3)
 
 # Initialize EKF 6-states parameters 0.01s
 ekf6 = EKF6.EKF_6states(0.01)
 
-# IMU Initialization
+# IMU settings
 SETTINGS_FILE = "RTIMULib"
 s = RTIMU.Settings(SETTINGS_FILE)
 imu = RTIMU.RTIMU(s)
@@ -48,14 +51,14 @@ imu.setGyroEnable(True)
 imu.setAccelEnable(True)
 imu.setCompassEnable(True)
 poll_interval = imu.IMUGetPollInterval()
-
-gyro_err_flag = 0
-gyro_bias_flag = 0
+# gyro err and bias
+gyro_err_flag = 1
+gyro_bias_flag = 1
 
 # EKF Initial params
 r2d = 180/np.pi
 d2r = np.pi/180
-
+# previous gyro data
 w_EB_B_xm = 0
 w_EB_B_ym = 0
 w_EB_B_zm = 0
@@ -143,6 +146,7 @@ class Get_IMU_Data(threading.Thread):
 			if imu.IMURead():
 				data = imu.getIMUData()
 				acc = data["accel"]
+				grop = gro
 				gro = data["gyro"]
 				mag = data["compass"]
 			time.sleep(0.01)
@@ -167,7 +171,7 @@ class EKF_Cal_Euler(threading.Thread):
 			global w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, bgx_h, bgy_h, bgz_h, QE_B_m, s6_P00_z, dtheda_xh, dtheda_yh, dtheda_zh
 			start_time = time.time()
 			# predict
-			s6_P00_z, QE_B_m = ekf6.Predict(w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, gro[0], gro[1], gro[2], bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z)
+			s6_P00_z, QE_B_m = ekf6.Predict(grop[0], grop[1], grop[2], gro[0], gro[1], gro[2], bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z)
 			# update
 			s6_P00_z, s6_z_update = ekf6.Update(acc[0], acc[1], acc[2], mag[0], mag[1], mag[2], QE_B_m, s6_P00_z, s6_H, s6_R)
 			# measurement
