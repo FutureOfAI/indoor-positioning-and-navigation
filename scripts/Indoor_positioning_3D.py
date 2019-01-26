@@ -201,97 +201,97 @@ def loop():
 	global uwb_array,gyro_array,gyro_count,sentAck,n_ekf_start,start,n_23,n_24,n_25,n_26,n_27,n_29,receivedAck, timePollAckSentTS, timePollReceivedTS, timePollSentTS, timePollAckReceivedTS, timeRangeReceivedTS, protocolFailed, data, expectedMsgId,expectedMsgID, timeRangeSentTS,Same_tag_flag,DistanceFinish_Flag,Position_Flag,EKF_start,EKF_message,EKF_New,EKF_Update
 
 	if Position_Flag==0:
-	    if sentAck == False and receivedAck == False:
-	        if ((millis() - lastActivity) > C.RESET_PERIOD):
-	            Anchor_resetInactive()
-	   	    return
+		if sentAck == False and receivedAck == False:
+			if ((millis() - lastActivity) > C.RESET_PERIOD):
+				Anchor_resetInactive()
+			return
 		if sentAck:
-	        #print("1")
-	        sentAck = False
-	        msgId = data[0]
-	        if Same_tag_flag == data[16]:
-	            if msgId == C.POLL_ACK:
-	        	    timePollAckSentTS = DW1000.getTransmitTimestamp()
-	        	    noteActivity()
+			#print("1")
+			sentAck = False
+			msgId = data[0]
+			if Same_tag_flag == data[16]:
+				if msgId == C.POLL_ACK:
+					timePollAckSentTS = DW1000.getTransmitTimestamp()
+					noteActivity()
 
-    	if receivedAck:
-            receivedAck = False
-            data = DW1000.getData(LEN_DATA)
-            msgId = data[0]
-            if msgId == C.POLL:
-                #print("2")
-            	DistanceFinish_Flag =1
-            	Same_tag_flag = data[16]
-            	protocolFailed = False
+		if receivedAck:
+			receivedAck = False
+			data = DW1000.getData(LEN_DATA)
+			msgId = data[0]
+			if msgId == C.POLL:
+				#print("2")
+				DistanceFinish_Flag =1
+				Same_tag_flag = data[16]
+				protocolFailed = False
 				timePollReceivedTS = DW1000.getReceiveTimestamp()
-            	expectedMsgId = C.RANGE
-            	transmitPollAck()
-            	noteActivity()
-            elif msgId == C.RANGE :
-                #print("3")
-            	if (DistanceFinish_Flag == 1 and Same_tag_flag == data[16]):
-                    DistanceFinish_Flag = 0
-                    timeRangeReceivedTS = DW1000.getReceiveTimestamp()
-                    expectedMsgId = C.POLL
+				expectedMsgId = C.RANGE
+				transmitPollAck()
+				noteActivity()
+			elif msgId == C.RANGE :
+				#print("3")
+				if (DistanceFinish_Flag == 1 and Same_tag_flag == data[16]):
+					DistanceFinish_Flag = 0
+					timeRangeReceivedTS = DW1000.getReceiveTimestamp()
+					expectedMsgId = C.POLL
 
-            	    if protocolFailed == False:
-                    	timePollSentTS = DW1000.getTimeStamp(data, 1)
-                    	timePollAckReceivedTS = DW1000.getTimeStamp(data, 6)
-                    	timeRangeSentTS = DW1000.getTimeStamp(data, 11)
-                    	computeRangeAsymmetric()
-                    	transmitRangeAcknowledge()
-                    	distance = (timeComputedRangeTS % C.TIME_OVERFLOW) * C.DISTANCE_OF_RADIO
+					if protocolFailed == False:
+						timePollSentTS = DW1000.getTimeStamp(data, 1)
+						timePollAckReceivedTS = DW1000.getTimeStamp(data, 6)
+						timeRangeSentTS = DW1000.getTimeStamp(data, 11)
+						computeRangeAsymmetric()
+						transmitRangeAcknowledge()
+						distance = (timeComputedRangeTS % C.TIME_OVERFLOW) * C.DISTANCE_OF_RADIO
 
-                    	if data[16]==23:
-                            #print("Tag: %.2d"%(data[16]))
-                            #print("Distance1: %.2f m" %(distance))
+						if data[16]==23:
+							#print("Tag: %.2d"%(data[16]))
+							#print("Distance1: %.2f m" %(distance))
 							#psierrrint("[%s]"%(time.ctime(time.time())))
 							t = time.time()
 							#print (int(round(t * 1000)))
-                            n_23=n_23+1
-						    if distance <12:
-						    	tag[0]=distance
+							n_23=n_23+1
+							if distance <12:
+								tag[0]=distance
 
-                    	if data[16]==25:
-                            #print("Tag: %.2d"%(data[16]))
-                            #print("Distance2: %.2f m" %(distance))
-                            #print("[%s]"%(time.ctime(time.time())))
-                            n_25=n_25+1
-                            if distance <12:
-			    				tag[1]=distance
+						if data[16]==25:
+							#print("Tag: %.2d"%(data[16]))
+							#print("Distance2: %.2f m" %(distance))
+							#print("[%s]"%(time.ctime(time.time())))
+							n_25=n_25+1
+							if distance <12:
+								tag[1]=distance
 
-                        if data[16]==26:
-                            #print("Tag: %.2d"%(data[16]))
-                            #print("Distance3: %.2f m" %(distance))
-			    			t = time.time()
-                            #print (int(round(t * 1000)))
-                            n_26=n_26+1
-                            if distance <12:
-			    				tag[2]=distance
+						if data[16]==26:
+							#print("Tag: %.2d"%(data[16]))
+							#print("Distance3: %.2f m" %(distance))
+							t = time.time()
+							#print (int(round(t * 1000)))
+							n_26=n_26+1
+							if distance <12:
+								tag[2]=distance
 
-                        if data[16]==27:
-                            #print("Tag: %.2d"%(data[16]))
-                            #print("Distance4: %.2f m" %(distance))
-                            n_27=n_27+1
-                            if distance <12:
-			    				tag[3]=distance
+						if data[16]==27:
+							#print("Tag: %.2d"%(data[16]))
+							#print("Distance4: %.2f m" %(distance))
+							n_27=n_27+1
+							if distance <12:
+								tag[3]=distance
 						if data[16]==24:
-                            #print("Tag: %.2d"%(data[16]))
-                            #print("Distance4: %.2f m" %(distance))
-                            n_24=n_24+1
-                            if distance <12:
-                                tag[4]=distance
+							#print("Tag: %.2d"%(data[16]))
+							#print("Distance4: %.2f m" %(distance))
+							n_24=n_24+1
+							if distance <12:
+								tag[4]=distance
 						if data[16]==29:
-                            #print("Tag: %.2d"%(data[16]))
-                            #print("Distance4: %.2f m" %(distance))
-                            n_29=n_29+1
-                            if distance <12:
-                                tag[5]=distance
+							#print("Tag: %.2d"%(data[16]))
+							#print("Distance4: %.2f m" %(distance))
+							n_29=n_29+1
+							if distance <12:
+								tag[5]=distance
 
-	            	else:
-	                    transmitRangeFailed()
+					else:
+						transmitRangeFailed()
 
-	                noteActivity()
+					noteActivity()
 
 # gyro err and bias
 gyro_err_flag = 1
