@@ -155,6 +155,7 @@ class Get_IMU_Data(threading.Thread):
 				if  IMU_Database_cnt<4000:
 					IMU_Database[IMU_Database_cnt,:] = np.array([acc[0], acc[1], acc[2], gro[0], gro[1], gro[2], mag[0], mag[1], mag[2]])
 				IMU_Database_cnt = IMU_Database_cnt + 1
+				print (IMU_Database_cnt)
 				data = imu.getIMUData()
 				acc = data["accel"]
 				# previous gyro data
@@ -172,9 +173,10 @@ class Get_UWB_Data(threading.Thread):
 		global IMU_Database_cnt
 		while True:
 			if IMU_Database_cnt>4000 and IMU_Database_flag == 0:
-				np.savetxt('output.csv', IMU_Database, delimiter=',')
-				IMU_Database_flag = 1
-				print (IMU_Database_cnt)
+				# np.savetxt('output.csv', IMU_Database, delimiter=',')
+				# IMU_Database_flag = 1
+				# print (IMU_Database_cnt)
+				pass
 			else:
 				print ("IMU Dabase Full!")
 			time.sleep(1)
