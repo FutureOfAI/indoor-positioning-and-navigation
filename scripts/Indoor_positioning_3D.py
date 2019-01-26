@@ -179,9 +179,8 @@ class Get_UWB_Data(threading.Thread):
 					for rows in IMU_Database:
 						writer.writerow([rows[0], rows[1], rows[2], rows[3], rows[4], rows[5], rows[6], rows[7], rows[8]])
 						IMU_Database_flag = 1
-				#print (IMU_Database_cnt)
-			else:
 				print (IMU_Database_cnt)
+			else:
 				print ("IMU Dabase Full!")
 			time.sleep(1)
 
