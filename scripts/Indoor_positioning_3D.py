@@ -169,17 +169,17 @@ class Get_UWB_Data(threading.Thread):
 		threading.Thread.__init__(self, name = t_name)
 		self.data = queue
 	def run(self):
-		global IMU_Database_cnt,IMU_Database_flag
-		while True:
-			if IMU_Database_cnt>4000:
-				if IMU_Database_flag == 0:
-					np.savetxt('output.csv', IMU_Database, delimiter=',')
-					IMU_Database_flag = 1
-				else:
-					print ("IMU Dabase Full!")
-			else:
-				print (IMU_Database_cnt)
-			time.sleep(1)
+		# global IMU_Database_cnt,IMU_Database_flag
+		# while True:
+		# 	if IMU_Database_cnt>4000:
+		# 		if IMU_Database_flag == 0:
+		# 			np.savetxt('output.csv', IMU_Database, delimiter=',')
+		# 			IMU_Database_flag = 1
+		# 		else:
+		# 			print ("IMU Dabase Full!")
+		# 	else:
+		# 		print (IMU_Database_cnt)
+		time.sleep(1)
 
 # 6-states EKF thread
 class EKF_Cal_Euler(threading.Thread):
@@ -210,18 +210,40 @@ class EKF_Cal_Euler(threading.Thread):
 			#print (psutil.cpu_percent())
 			time.sleep(0.01)
 
+# Save data Thread
+class Save_Data(threading.Thread):
+	def __init__(self, t_name, queue):
+		threading.Thread.__init__(self, name = t_name)
+		self.data = queue
+	def run(self):
+		global IMU_Database_cnt,IMU_Database_flag
+		while True:
+			if IMU_Database_cnt>4000:
+				if IMU_Database_flag == 0:
+					np.savetxt('output.csv', IMU_Database, delimiter=',')
+					IMU_Database_flag = 1
+				else:
+					print ("IMU Dabase Full!")
+			else:
+				print (IMU_Database_cnt)
+			time.sleep(1)
+		
+
 # main Thread
 def main():
 	queue = Queue()
 	imu = Get_IMU_Data('IMU.', queue)
 	uwb = Get_UWB_Data('UWB.', queue)
 	euler = EKF_Cal_Euler('Euler.',queue)
+	dataS = Save_Data('Save Data', queue)
 	imu.start()
 	uwb.start()
 	euler.start()
+	dataS.start()
 	imu.join()
 	uwb.join()
 	euler.join()
+	dataS.join()
 	print ('All threads terminate!')
 
 
