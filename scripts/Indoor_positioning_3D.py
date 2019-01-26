@@ -405,7 +405,7 @@ class Get_UWB_Data(threading.Thread):
 		self.data = queue
 	def run(self):
 		loop()
-		time.sleep(1)
+		time.sleep(0.01)
 
 # 6-states EKF thread
 class EKF_Cal_Euler(threading.Thread):
@@ -451,7 +451,8 @@ class Save_Data(threading.Thread):
 				else:
 					print ("IMU Dabase Full!")
 			else:
-				print (IMU_Database_cnt)
+				#print (IMU_Database_cnt)
+				pass
 			time.sleep(1)
 		
 
@@ -470,10 +471,10 @@ def main():
 	uwb = Get_UWB_Data('UWB.', queue)
 	euler = EKF_Cal_Euler('Euler.',queue)
 	dataS = Save_Data('Save Data', queue)
-	imu.start()
+	# imu.start()
 	uwb.start()
-	euler.start()
-	dataS.start()
+	# euler.start()
+	# dataS.start()
 	imu.join()
 	uwb.join()
 	euler.join()
