@@ -271,22 +271,22 @@ class Get_UWB_Data(threading.Thread):
 							uwb.transmitRangeAcknowledge(uwb_data, LEN_DATA)
 							distance = (timeComputedRangeTS % DWM1000_TIME_OVERFLOW) * DWM1000_DISTANCE_OF_RADIO
 							if uwb_data[16] == 23:
-								print("Tag: %.2d"%(data[16]))
+								print("Tag: %.2d"%(uwb_data[16]))
 								print("Distance1: %.2f m" %(distance))
-							if data[16]==24:
-								print("Tag: %.2d"%(data[16]))
+							if uwb_data[16]==24:
+								print("Tag: %.2d"%(uwb_data[16]))
 								print("Distance4: %.2f m" %(distance))
-							if data[16]==25:
-								print("Tag: %.2d"%(data[16]))
+							if uwb_data[16]==25:
+								print("Tag: %.2d"%(uwb_data[16]))
 								print("Distance2: %.2f m" %(distance))
-							if data[16]==26:
-								print("Tag: %.2d"%(data[16]))
+							if uwb_data[16]==26:
+								print("Tag: %.2d"%(uwb_data[16]))
 								print("Distance3: %.2f m" %(distance))
-							if data[16]==27:
-								print("Tag: %.2d"%(data[16]))
+							if uwb_data[16]==27:
+								print("Tag: %.2d"%(uwb_data[16]))
 								print("Distance4: %.2f m" %(distance))
-							if data[16]==29:
-								print("Tag: %.2d"%(data[16]))
+							if uwb_data[16]==29:
+								print("Tag: %.2d"%(uwb_data[16]))
 								print("Distance4: %.2f m" %(distance))
 						else:
 							uwb.transmitRangeFailed(uwb_data, LEN_DATA)
