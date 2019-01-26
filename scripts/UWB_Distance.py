@@ -9,7 +9,7 @@ import RPi.GPIO as GPIO
 
 class UWB_Distance(object):
 	"""docstring for UWB"""
-	def __init__(self, rst, iqr, css, handleSent, handleReceived):
+	def __init__(self, rst, iqr, css, handleSent(self), handleReceived(self)):
 		super(UWB_Distance, self).__init__()
 		self._rst = rst
 		self._iqr = iqr
