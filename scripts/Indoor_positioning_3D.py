@@ -197,7 +197,7 @@ def handleReceived(self):
 # Initialize EKF 6-states parameters 0.01s
 ekf6 = EKF6.EKF_6states(0.01)
 # Initialize UWB parameters
-uwb = UWB.UWB_Distance(PIN_RST, PIN_IRQ, PIN_SS, handleSent, handleReceived)
+uwb = UWB.UWB_Distance(PIN_RST, PIN_IRQ, PIN_SS, handleSent(), handleReceived())
 # defind reveiver
 uwb.receiver()
 # tag last activity
