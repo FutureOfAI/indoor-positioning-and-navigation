@@ -276,8 +276,8 @@ def loop():
 							if distance <12:
 								tag[3]=distance
 						if data[16]==24:
-							#print("Tag: %.2d"%(data[16]))
-							#print("Distance4: %.2f m" %(distance))
+							print("Tag: %.2d"%(data[16]))
+							print("Distance4: %.2f m" %(distance))
 							n_24=n_24+1
 							if distance <12:
 								tag[4]=distance
