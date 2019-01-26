@@ -7,7 +7,7 @@ import monotonic
 import DW1000Constants as C
 import RPi.GPIO as GPIO
 
-class UWB_Diatance(object):
+class UWB_Distance(object):
 	"""docstring for UWB"""
 	def __init__(self, rst, iqr, css, handleSent, handleReceived):
 		super(UWB, self).__init__()
