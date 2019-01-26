@@ -172,13 +172,13 @@ class Get_UWB_Data(threading.Thread):
 	def run(self):
 		global IMU_Database_cnt
 		while True:
-			if IMU_Database_cnt>4000 and IMU_Database_flag == 0:
-				# np.savetxt('output.csv', IMU_Database, delimiter=',')
-				# IMU_Database_flag = 1
-				# print (IMU_Database_cnt)
-				pass
-			else:
-				print ("IMU Dabase Full!")
+			if IMU_Database_cnt>4000:
+				print (IMU_Database_cnt)
+				if IMU_Database_flag == 0:
+					np.savetxt('output.csv', IMU_Database, delimiter=',')
+					IMU_Database_flag = 1
+				else:
+					print ("IMU Dabase Full!")
 			time.sleep(1)
 
 # 6-states EKF thread
