@@ -182,7 +182,7 @@ class EKF_Cal_Euler(threading.Thread):
 			Angle = ekf6.quatern2euler(QE_B_m)
 			end_time = time.time()
 			dt = end_time-start_time
-			print (2*Angle*r2d, dt)
+			print (Angle*r2d, dt)
 			#print (psutil.cpu_percent())
 			time.sleep(0.01)
 
