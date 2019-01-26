@@ -172,9 +172,8 @@ class Get_UWB_Data(threading.Thread):
 		global IMU_Database_cnt
 		while True:
 			if IMU_Database_cnt>4000 and IMU_Database_flag == 0:
-				for cnt in range(4000):
-					np.savetxt('output.csv', (IMU_Database[cnt,:]), delimiter=',')
-					IMU_Database_flag = 1
+				np.savetxt('output.csv', IMU_Database, delimiter=',')
+				IMU_Database_flag = 1
 				print (IMU_Database_cnt)
 			else:
 				print ("IMU Dabase Full!")
