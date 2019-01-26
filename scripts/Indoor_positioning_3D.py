@@ -171,17 +171,17 @@ class Get_UWB_Data(threading.Thread):
 		self.data = queue
 	def run(self):
 		global IMU_Database_cnt
-		while True:
-			if IMU_Database_cnt>4000 and IMU_Database_flag == 0:
-				# write test data to .csv
-				with open('output.csv', 'w', newline='') as csvfile:
-					writer = csv.writer(csvfile)
+		# write test data to .csv
+		with open('output.csv', 'w', newline='') as csvfile:
+			writer = csv.writer(csvfile)
+			while True:
+				if IMU_Database_cnt>4000 and IMU_Database_flag == 0:
 					for rows in IMU_Database:
 						writer.writerow([rows[0], rows[1], rows[2], rows[3], rows[4], rows[5], rows[6], rows[7], rows[8]])
 						IMU_Database_flag = 1
-				print (IMU_Database_cnt)
-			else:
-				print ("IMU Dabase Full!")
+					print (IMU_Database_cnt)
+				else:
+					print ("IMU Dabase Full!")
 			time.sleep(1)
 
 # 6-states EKF thread
