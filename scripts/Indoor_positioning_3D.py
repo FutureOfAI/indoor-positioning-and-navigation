@@ -20,6 +20,15 @@ from Queue import Queue
 import psutil
 import csv
 
+# initial database matrix
+IMU_Database = np.zeros([4000,9])
+UWB_Database = np.zeros([4000,6])
+IMU_Database_cnt = 0
+UWB_Database_cnt = 0
+IMU_Database_flag = 0
+UWB_Database_flag = 0
+IMU_start_time = time.time()
+
 # Matlab algorithm test data 
 grox_test = np.array([0,0.002741556236919,0.002741555560467])
 groy_test = np.array([0,0.005483112473838,0.005483111120934])
@@ -71,11 +80,11 @@ psierr = 10*0.5
 dtheda_xh = phierr*d2r
 dtheda_yh = thetaerr*d2r
 dtheda_zh = psierr*d2r
-
+# initial gyro bias predict data
 bgx_h = 0
 bgy_h = 0
 bgz_h = 0
-
+# initial quaternion
 dq11 = -dtheda_xh/2
 dq21 = -dtheda_yh/2
 dq31 = -dtheda_zh/2
@@ -86,7 +95,7 @@ q1 = np.sqrt(1-np.square(q2)-np.square(q3)-np.square(q4))
 dQerr = Quaternion(q1, q2, q3, q4)
 Q_E_B = Quaternion(1, 0, 0, 0)
 QE_B_m = dQerr.normalised * Q_E_B.normalised
-
+# initial state matrix
 bgx0=gyro_bias_flag*0.05*d2r
 bgy0=gyro_bias_flag*(-0.05)*d2r
 bgz0=gyro_bias_flag*0.05*d2r
@@ -98,7 +107,7 @@ s6_xz_h[2,0] = psierr*d2r
 s6_xz_h[3,0] = bgx0
 s6_xz_h[4,0] = bgy0
 s6_xz_h[5,0] = bgz0
-
+# initial P matrix
 s6_P00_z = np.zeros([6,6])
 s6_P00_z[0,0] = np.square(phierr*d2r)
 s6_P00_z[1,1] = np.square(thetaerr*d2r)
@@ -106,7 +115,7 @@ s6_P00_z[2,2] = np.square(psierr*d2r)
 s6_P00_z[3,3] = np.square(bgx0)
 s6_P00_z[4,4] = np.square(bgy0)
 s6_P00_z[5,5] = np.square(bgz0)
-
+# initial angle and rate random walk
 sig_factor = 1
 sig_x_arw = sig_factor*gyro_err_flag*0.02
 sig_y_arw = sig_factor*gyro_err_flag*0.02
@@ -114,7 +123,7 @@ sig_z_arw = sig_factor*gyro_err_flag*0.02
 sig_x_rrw = sig_factor*gyro_err_flag*0.02/3600
 sig_y_rrw = sig_factor*gyro_err_flag*0.02/3600
 sig_z_rrw = sig_factor*gyro_err_flag*0.02/3600
-
+# initial Q matrix
 s6_Q_z = np.zeros([6,6])
 Q_factor = 0.01
 s6_Q_z[0,0] = Q_factor*np.square(sig_x_arw)
@@ -123,12 +132,12 @@ s6_Q_z[2,2] = Q_factor*np.square(sig_z_arw)
 s6_Q_z[3,3] = Q_factor*np.square(sig_x_rrw)
 s6_Q_z[4,4] = Q_factor*np.square(sig_y_rrw)
 s6_Q_z[5,5] = Q_factor*np.square(sig_z_rrw)
-
+# H matrix
 s6_H = np.zeros([3,6])
 s6_H[0,0] = 1
 s6_H[1,1] = 1
 s6_H[2,2] = 1
-
+# R matrix
 s6_R = np.zeros([3,3])
 R_factor = 0.1
 s6_R[0,0] = R_factor*np.square(0.5*d2r)
@@ -144,8 +153,14 @@ class Get_IMU_Data(threading.Thread):
 		global acc, gro, mag
 		while True:
 			if imu.IMURead():
+				IMU_stable_time = time.time()
+				# generate IMU data after 10s
+				if (IMU_stable_time-IMU_start_time)>10000 and IMU_Database_cnt<4000:
+					IMU_Database([IMU_Database_cnt,:]) = np.array([acc, gro, mag])
+					IMU_Database_cnt++;
 				data = imu.getIMUData()
 				acc = data["accel"]
+				# previous gyro data
 				grop = gro
 				gro = data["gyro"]
 				mag = data["compass"]
@@ -158,7 +173,15 @@ class Get_UWB_Data(threading.Thread):
 		self.data = queue
 	def run(self):
 		while True:
-			#print ("task-UWB")
+			if IMU_Database_cnt>4000 and IMU_Database_flag == 0:
+				# write test data to .csv
+				with open('output.csv', 'w', newline='') as csvfile:
+					writer = csv.writer(csvfile)
+					for rows in IMU_Database:
+						writer.writerow([rows[0], rows[1], rows[2], rows[3], rows[4], rows[5], rows[6], rows[7], rows[8]])
+						IMU_Database_flag = 1
+			else:
+				print ("IMU Dabase Full!")
 			time.sleep(1)
 
 # 6-states EKF thread
@@ -169,7 +192,7 @@ class EKF_Cal_Euler(threading.Thread):
 	def run(self):
 		while True:
 			global w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, bgx_h, bgy_h, bgz_h, QE_B_m, s6_P00_z, dtheda_xh, dtheda_yh, dtheda_zh
-			start_time = time.time()
+			EKF_start_time = time.time()
 			# predict
 			s6_P00_z, QE_B_m = ekf6.Predict(w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, gro[0], gro[1], gro[2], bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z)
 			# update
@@ -184,8 +207,8 @@ class EKF_Cal_Euler(threading.Thread):
 			dQ2 = Quaternion(q1, q2, q3, q4)
 			QE_B_m = dQ2.normalised * QE_B_m.normalised
 			Angle = ekf6.quatern2euler(QE_B_m)
-			end_time = time.time()
-			dt = end_time-start_time
+			EKF_end_time = time.time()
+			dt = EKF_start_time-EKF_end_time
 			print (Angle*r2d, dt)
 			#print (psutil.cpu_percent())
 			time.sleep(0.01)
@@ -197,10 +220,10 @@ def main():
 	uwb = Get_UWB_Data('UWB.', queue)
 	euler = EKF_Cal_Euler('Euler.',queue)
 	imu.start()
-##	uwb.start()
+	uwb.start()
 	euler.start()
 	imu.join()
-##	uwb.join()
+	uwb.join()
 	euler.join()
 	print ('All threads terminate!')
 
