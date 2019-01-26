@@ -230,8 +230,8 @@ class Get_UWB_Data(threading.Thread):
 		threading.Thread.__init__(self, name = t_name)
 		self.data = queue
 	def run(self):
-		global ( sentAck, receivedAck, lastActivity, timePollAckSentTS, uwb_data, DistanceFinish_Flag, Same_tag_flag, protocolFailed, 
-			timePollReceivedTS, timeRangeReceivedTS, timePollSentTS, timePollAckReceivedTS, timeRangeSentTS, timeComputedRangeTS )
+		global sentAck, receivedAck, lastActivity, timePollAckSentTS, uwb_data, DistanceFinish_Flag, Same_tag_flag, protocolFailed, \
+			timePollReceivedTS, timeRangeReceivedTS, timePollSentTS, timePollAckReceivedTS, timeRangeSentTS, timeComputedRangeTS 
 
 		while True:
 			if sentAck == False and receivedAck == False:
