@@ -9,18 +9,13 @@ import RPi.GPIO as GPIO
 
 class UWB_Diatance(object):
 	"""docstring for UWB"""
-	def __init__(self, rst, iqr, css):
+	def __init__(self, rst, iqr, css, handleSent, handleReceived):
 		super(UWB, self).__init__()
 		self._rst = rst
 		self._iqr = iqr
 		self._css = css
-		self.timePollAckSentTS = 0
-		self.timePollAckReceivedTS = 0
-		self.timePollReceivedTS = 0
-		self.timeRangeReceivedTS = 0
-		self.timePollSentTS = 0
-		self.timeRangeSentTS = 0
-		self.timeComputedRangeTS = 0
+		self._handleSent = handleSent
+		self._handleReceived = handleReceived
 		self.REPLY_DELAY_TIME_US = 7000
 
 		GPIO.setmode(GPIO.BCM)
@@ -34,9 +29,9 @@ class UWB_Diatance(object):
 		# clear received status
 		DW1000.registerCallback("handleReceived", self.handleReceived)
 		# start reception
-		self.receiver()
+		# self.receiver()
 		# tag last activity
-		self.noteActivity()
+		# self.noteActivity()
 
 	def millis(self):
 		"""
@@ -45,41 +40,24 @@ class UWB_Diatance(object):
 		"""
 		return int(round(monotonic.monotonic() * C.MILLISECONDS))
 
-	def handleSent(self):
-		"""
-		This is a callback called from the module's interrupt handler when a transmission was successful.
-		It sets the sentAck variable as True so the loop can continue.
-		"""
-		global sentAck
-		sentAck = True
-
-	def handleReceived(self):
-		"""
-		This is a callback called from the module's interrupt handler when a reception was successful.
-		It sets the received receivedAck as True so the loop can continue.
-		"""
-		global receivedAck
-		receivedAck = True
-
 	def noteActivity(self):
 		"""
 		This function records the time of the last activity so we can know if the device is inactive or not.
 		"""
-		global lastActivity
 		lastActivity = self.millis()
+		return lastActivity
 
 	def Anchor_resetInactive(self):
 		"""
 		This function restarts the default polling operation when the device is deemed inactive.
 		"""
-		global expectedMsgId
 		DW1000.generalConfiguration("82:17:5B:D5:A9:9A:E2:9B", C.MODE_LONGDATA_RANGE_ACCURACY)
 		DW1000.registerCallback("handleSent", self.handleSent)
 		DW1000.registerCallback("handleReceived", self.handleReceived)
 		DW1000.setAntennaDelay(C.ANTENNA_DELAY_RASPI)
-		expectedMsgId = C.POLL
 		self.receiver()
-		self.noteActivity()
+		lastActivity = self.noteActivity()
+		return lastActivity
 
 	def receiver(self):
 		"""
@@ -89,134 +67,53 @@ class UWB_Diatance(object):
 		DW1000.receivePermanently()
 		DW1000.startReceive()
 
-	def transmitPollAck(self):
+	def transmitPollAck(self, data, LEN_DATA):
 		"""
 		This function sends the polling acknowledge message which is used to confirm the reception of the polling message.
 		"""
-		global data
 		DW1000.newTransmit()
 		data[0] = C.POLL_ACK
 		DW1000.setDelay(self.REPLY_DELAY_TIME_US, C.MICROSECONDS)
 		DW1000.setData(data, LEN_DATA)
 		DW1000.startTransmit()
 
-	def transmitRangeAcknowledge(self):
+	def transmitRangeAcknowledge(self, data, LEN_DATA):
 		"""
 		This functions sends the range acknowledge message which tells the tag that the ranging function was successful and another ranging transmission can begin.
 		"""
-		global data
 		DW1000.newTransmit()
 		data[0] = C.RANGE_REPORT
-
 		DW1000.setData(data, LEN_DATA)
 		DW1000.startTransmit()
 
-	def transmitRangeFailed(self):
+	def transmitRangeFailed(self, data, LEN_DATA):
 		"""
 		This functions sends the range failed message which tells the tag that the ranging function has failed and to start another ranging transmission.
 		"""
-		global data
 		DW1000.newTransmit()
 		data[0] = C.RANGE_FAILED
 		DW1000.setData(data, LEN_DATA)
 		DW1000.startTransmit()
 
-	def computeRangeAsymmetric():
+	def computeRangeAsymmetric(self, timePollAckSentTS, timePollReceivedTS, timeRangeReceivedTS, timePollSentTS, timePollAckReceivedTS, timeRangeSentTS):
 		"""
 		This is the function which calculates the timestamp used to determine the range between the devices.
 		"""
-		global timeComputedRangeTS
-		round1 = DW1000.wrapTimestamp(self.timePollAckReceivedTS - self.timePollSentTS)
-		reply1 = DW1000.wrapTimestamp(self.timePollAckSentTS - self.timePollReceivedTS)
-		round2 = DW1000.wrapTimestamp(self.timeRangeReceivedTS - self.timePollAckSentTS)
-		reply2 = DW1000.wrapTimestamp(self.timeRangeSentTS - self.timePollAckReceivedTS)
+		round1 = DW1000.wrapTimestamp(timePollAckReceivedTS - timePollSentTS)
+		reply1 = DW1000.wrapTimestamp(timePollAckSentTS - timePollReceivedTS)
+		round2 = DW1000.wrapTimestamp(timeRangeReceivedTS - timePollAckSentTS)
+		reply2 = DW1000.wrapTimestamp(timeRangeSentTS - timePollAckReceivedTS)
 		timeComputedRangeTS = (round1 * round2 - reply1 * reply2) / (round1 + round2 + reply1 + reply2)
+		return timeComputedRangeTS
 
-	def loop():
-		global uwb_array,gyro_array,gyro_count,sentAck,n_ekf_start,start,receivedAck, timePollAckSentTS, timePollReceivedTS, timePollSentTS, timePollAckReceivedTS, timeRangeReceivedTS, protocolFailed, data, expectedMsgId,expectedMsgID, timeRangeSentTS,Same_tag_flag,DistanceFinish_Flag,EKF_start,EKF_message,EKF_New,EKF_Update
+	def read_DWM1000_data(self, LEN_DATA):
+		return DW1000.getData(LEN_DATA)
 
-		if sentAck == False and receivedAck == False:
-			if ((millis() - lastActivity) > C.RESET_PERIOD):
-				Anchor_resetInactive()
-			return
-		if sentAck:
-			#print("1")
-			sentAck = False
-			msgId = data[0]
-			if Same_tag_flag == data[16]:
-				if msgId == C.POLL_ACK:
-					timePollAckSentTS = DW1000.getTransmitTimestamp()
-					noteActivity()
+	def get_Trans_timestamp(self):
+		return DW1000.getTransmitTimestamp()
 
-		if receivedAck:
-			receivedAck = False
-			data = DW1000.getData(LEN_DATA)
-			msgId = data[0]
-			if msgId == C.POLL:
-				#print("2")
-				DistanceFinish_Flag =1
-				Same_tag_flag = data[16]
-				protocolFailed = False
-				timePollReceivedTS = DW1000.getReceiveTimestamp()
-				expectedMsgId = C.RANGE
-				transmitPollAck()
-				noteActivity()
-			elif msgId == C.RANGE :
-				#print("3")
-				if (DistanceFinish_Flag == 1 and Same_tag_flag == data[16]):
-					DistanceFinish_Flag = 0
-					timeRangeReceivedTS = DW1000.getReceiveTimestamp()
-					expectedMsgId = C.POLL
+	def get_Rcv_timestamp(self):
+		return DW1000.getReceiveTimestamp()
 
-					if protocolFailed == False:
-						timePollSentTS = DW1000.getTimeStamp(data, 1)
-						timePollAckReceivedTS = DW1000.getTimeStamp(data, 6)
-						timeRangeSentTS = DW1000.getTimeStamp(data, 11)
-						computeRangeAsymmetric()
-						transmitRangeAcknowledge()
-						distance = (timeComputedRangeTS % C.TIME_OVERFLOW) * C.DISTANCE_OF_RADIO
-
-						if data[16]==23:
-							print("Tag: %.2d"%(data[16]))
-							print("Distance1: %.2f m" %(distance))
-							#psierrrint("[%s]"%(time.ctime(time.time())))
-							t = time.time()
-							#print (int(round(t * 1000)))
-							if distance <12:
-								tag[0]=distance
-
-						if data[16]==25:
-							print("Tag: %.2d"%(data[16]))
-							print("Distance2: %.2f m" %(distance))
-							#print("[%s]"%(time.ctime(time.time())))
-							if distance <12:
-								tag[1]=distance
-
-						if data[16]==26:
-							print("Tag: %.2d"%(data[16]))
-							print("Distance3: %.2f m" %(distance))
-							t = time.time()
-							#print (int(round(t * 1000)))
-							if distance <12:
-								tag[2]=distance
-
-						if data[16]==27:
-							print("Tag: %.2d"%(data[16]))
-							print("Distance4: %.2f m" %(distance))
-							if distance <12:
-								tag[3]=distance
-						if data[16]==24:
-							print("Tag: %.2d"%(data[16]))
-							print("Distance4: %.2f m" %(distance))
-							if distance <12:
-								tag[4]=distance
-						if data[16]==29:
-							print("Tag: %.2d"%(data[16]))
-							print("Distance4: %.2f m" %(distance))
-							if distance <12:
-								tag[5]=distance
-
-					else:
-						transmitRangeFailed()
-
-					noteActivity()
+	def get_timestamp(self, data, pos):
+		return DW1000.getTimeStamp(data, pos)
