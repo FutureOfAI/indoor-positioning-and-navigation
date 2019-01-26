@@ -404,7 +404,8 @@ class Get_UWB_Data(threading.Thread):
 		threading.Thread.__init__(self, name = t_name)
 		self.data = queue
 	def run(self):
-		loop()
+		#loop()
+		print ("uwb")
 		time.sleep(0.01)
 
 # 6-states EKF thread
