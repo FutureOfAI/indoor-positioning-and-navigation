@@ -254,13 +254,13 @@ class Get_UWB_Data(threading.Thread):
 				msgId = uwb_data[0]
 				if msgId == DWM1000_POLL:
 					DistanceFinish_Flag = 1
-					Same_tag_flag = data[16]
+					Same_tag_flag = uwb_data[16]
 					protocolFailed = False
 					timePollReceivedTS = uwb.get_Rcv_timestamp()
 					uwb.transmitPollAck(uwb_data, LEN_DATA)
 					lastActivity = uwb.noteActivity()
 				elif msgId == DWM1000_RANGE:
-					if DistanceFinish_Flag == 1 and Same_tag_flag == data[16]:
+					if DistanceFinish_Flag == 1 and Same_tag_flag == uwb_data[16]:
 						DistanceFinish_Flag = 0
 						timeRangeReceivedTS = uwb.get_Rcv_timestamp()
 						if protocolFailed == False:
