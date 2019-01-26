@@ -157,7 +157,7 @@ class Get_IMU_Data(threading.Thread):
 				# generate IMU data after 10s
 				if (IMU_stable_time-IMU_start_time)>10000 and IMU_Database_cnt<4000:
 					IMU_Database[IMU_Database_cnt,:] = np.array([acc[0], acc[1], acc[2], gro[0], gro[1], gro[2], mag[0], mag[1], mag[2]])
-					IMU_Database_cnt++;
+					IMU_Database_cnt++
 				data = imu.getIMUData()
 				acc = data["accel"]
 				# previous gyro data
