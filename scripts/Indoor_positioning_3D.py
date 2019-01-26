@@ -449,7 +449,6 @@ class Save_Data(threading.Thread):
 				if IMU_Database_flag == 0:
 					np.savetxt('output.csv', IMU_Database, delimiter=',')
 					IMU_Database_flag = 1
-				else:
 					print ("IMU Dabase Full!")
 			else:
 				#print (IMU_Database_cnt)
