@@ -174,7 +174,7 @@ class Get_UWB_Data(threading.Thread):
 	def run(self):
 		global IMU_Database_cnt
 		while True:
-			if IMU_Database_cnt>4000 and IMU_Database_flag == 0:
+			if IMU_Database_cnt>=4000 and IMU_Database_flag == 0:
 				# write test data to .csv
 				with open('output.csv', 'w', newline='') as csvfile:
 					writer = csv.writer(csvfile)
