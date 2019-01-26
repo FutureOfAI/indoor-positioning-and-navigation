@@ -104,7 +104,7 @@ s6_P00_z[3,3] = np.square(bgx0)
 s6_P00_z[4,4] = np.square(bgy0)
 s6_P00_z[5,5] = np.square(bgz0)
 
-sig_factor = 10000
+sig_factor = 1
 sig_x_arw = sig_factor*gyro_err_flag*0.02
 sig_y_arw = sig_factor*gyro_err_flag*0.02
 sig_z_arw = sig_factor*gyro_err_flag*0.02
