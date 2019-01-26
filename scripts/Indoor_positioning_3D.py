@@ -27,7 +27,6 @@ IMU_Database_cnt = 0
 UWB_Database_cnt = 0
 IMU_Database_flag = 0
 UWB_Database_flag = 0
-IMU_start_time = time.time()
 
 # Matlab algorithm test data 
 grox_test = np.array([0,0.002741556236919,0.002741555560467])
@@ -153,12 +152,10 @@ class Get_IMU_Data(threading.Thread):
 		global acc, gro, mag, IMU_Database_cnt
 		while True:
 			if imu.IMURead():
-				IMU_stable_time = time.time()
-				# generate IMU data after 10s
-				if (IMU_stable_time-IMU_start_time)>10000:
-					if  IMU_Database_cnt<4000:
-						IMU_Database[IMU_Database_cnt,:] = np.array([acc[0], acc[1], acc[2], gro[0], gro[1], gro[2], mag[0], mag[1], mag[2]])
-					IMU_Database_cnt = IMU_Database_cnt + 1
+				# generate IMU data
+				if  IMU_Database_cnt<4000:
+					IMU_Database[IMU_Database_cnt,:] = np.array([acc[0], acc[1], acc[2], gro[0], gro[1], gro[2], mag[0], mag[1], mag[2]])
+				IMU_Database_cnt = IMU_Database_cnt + 1
 				data = imu.getIMUData()
 				acc = data["accel"]
 				# previous gyro data
