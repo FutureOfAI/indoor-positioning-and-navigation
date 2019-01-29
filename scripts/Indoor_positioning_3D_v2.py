@@ -75,7 +75,6 @@ DW1000.setup(PIN_SS)
 # print("############### ANCHOR ##############")
 DW1000.generalConfiguration("82:17:5B:D5:A9:9A:E2:9B", C.MODE_LONGDATA_RANGE_ACCURACY)
 DW1000.setAntennaDelay(C.ANTENNA_DELAY_RASPI)
-
 # set DWM1000 mutex for muti-anchors distance measure
 UWB_Mutex = threading.Lock()
 
