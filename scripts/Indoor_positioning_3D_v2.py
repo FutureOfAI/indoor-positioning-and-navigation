@@ -205,10 +205,6 @@ def handleReceived():
 	global receivedAck
 	receivedAck = True
 
-DW1000.registerCallback("handleSent", handleSent)
-DW1000.registerCallback("handleReceived", handleReceived)
-
-
 def noteActivity():
 	"""
 	This function records the time of the last activity so we can know if the device is inactive or not.
@@ -226,7 +222,7 @@ def Anchor_resetInactive():
 	DW1000.registerCallback("handleReceived", handleReceived)
 	DW1000.setAntennaDelay(C.ANTENNA_DELAY_RASPI)       
 	expectedMsgId = C.POLL
-	print("run")
+	#print("run")
 	receiver()
 	noteActivity()
 
@@ -270,9 +266,6 @@ def receiver():
 	DW1000.newReceive()
 	DW1000.receivePermanently()
 	DW1000.startReceive()
-
-receiver()
-noteActivity()
 
 def computeRangeAsymmetric():
 	"""
@@ -419,6 +412,12 @@ class Save_Data(threading.Thread):
 
 # main Thread
 def main():
+	# initialize DWM settings
+	DW1000.registerCallback("handleSent", handleSent)
+	DW1000.registerCallback("handleReceived", handleReceived)
+	receiver()
+	noteActivity()
+
 	queue = Queue()
 	# imu_queue = Get_IMU_Data('IMU.', queue)
 	uwb_queue = Get_UWB_Data('UWB.', queue)
