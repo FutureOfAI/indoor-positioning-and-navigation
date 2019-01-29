@@ -501,14 +501,14 @@ def generalConfiguration(address, mode):
     readBytes(C.DEV_ID, C.NO_SUB, data, 4)
     readBytes(C.EUI, C.NO_SUB, data2, 8)
     readBytes(C.PANADR, C.NO_SUB, data3, 4)
-    
+    """
     print("\nDevice ID %02X - model: %d, version: %d, revision: %d" %
           ((data[3] << 8) | data[2], (data[1]), (data[0] >> 4) & C.MASK_NIBBLE, data[0] & C.MASK_NIBBLE))
     print("Unique ID: %02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X" % (
         data2[7], data2[6], data2[5], data2[4], data2[3], data2[2], data2[1], data2[0]))
     print("Network ID & Device Address: PAN: %02X, Short Address: %02X" %
           (((data3[3] << 8) | data3[2]), ((data3[1] << 8) | data3[0])))
-    
+    """
     getDeviceModeInfo()
 
 
