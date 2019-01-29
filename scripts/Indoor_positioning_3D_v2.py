@@ -285,6 +285,7 @@ def loop():
 	if sentAck == False and receivedAck == False:
 		if ((millis() - lastActivity) > C.RESET_PERIOD):
 			Anchor_resetInactive()
+			print "test"
 			return
 
 	if sentAck:
