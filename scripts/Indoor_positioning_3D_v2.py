@@ -46,7 +46,6 @@ imu.setCompassEnable(True)
 poll_interval = imu.IMUGetPollInterval()
 
 # DWM Initialize
-Position_Flag=0
 DistanceFinish_Flag=0
 Same_tag_flag=0
 lastActivity = 0
@@ -56,8 +55,6 @@ sentAck = False
 receivedAck = False
 LEN_DATA =25
 data = [0] * LEN_DATA
-LEN_TAG=6
-tag=[0]*LEN_TAG
 timePollAckSentTS = 0
 timePollAckReceivedTS = 0
 timePollReceivedTS = 0
@@ -74,8 +71,8 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(PIN_RST,GPIO.IN)
 DW1000.begin(PIN_IRQ)
 DW1000.setup(PIN_SS)
-print("DW1000 initialized")
-print("############### ANCHOR ##############")
+# print("DW1000 initialized")
+# print("############### ANCHOR ##############")
 DW1000.generalConfiguration("82:17:5B:D5:A9:9A:E2:9B", C.MODE_LONGDATA_RANGE_ACCURACY)
 DW1000.setAntennaDelay(C.ANTENNA_DELAY_RASPI)
 
