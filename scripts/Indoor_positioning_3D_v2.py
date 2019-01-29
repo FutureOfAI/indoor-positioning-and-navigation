@@ -301,6 +301,7 @@ def loop():
 		if msgId != expectedMsgId:
 			protocolFailed = True
 		if msgId == C.POLL:
+			mutex.acquire()
 			# DistanceFinish_Flag =1
 			# Same_tag_flag = data[16]
 			protocolFailed = False
@@ -320,7 +321,7 @@ def loop():
 				computeRangeAsymmetric()
 				transmitRangeAcknowledge()
 				distance = (timeComputedRangeTS % C.TIME_OVERFLOW) * C.DISTANCE_OF_RADIO
-
+				mutex.release()
 				if data[16]==23:
 					print("An23_Distance: %.2f m" %(distance))
 				if data[16]==25:
