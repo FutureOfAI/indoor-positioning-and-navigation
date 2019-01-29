@@ -323,23 +323,17 @@ def loop():
 					distance = (timeComputedRangeTS % C.TIME_OVERFLOW) * C.DISTANCE_OF_RADIO
 
 					if data[16]==23:
-						print("Tag: %.2d"%(data[16]))
-						print("Distance1: %.2f m" %(distance))
+						print("An23_Distance: %.2f m" %(distance))
 					if data[16]==25:
-						print("Tag: %.2d"%(data[16]))
-						print("Distance2: %.2f m" %(distance))
+						print("An25_Distance: %.2f m" %(distance))
 					if data[16]==26:
-						print("Tag: %.2d"%(data[16]))
-						print("Distance3: %.2f m" %(distance))
+						print("An26_Distance: %.2f m" %(distance))
 					if data[16]==27:
-						print("Tag: %.2d"%(data[16]))
-						print("Distance4: %.2f m" %(distance))
+						print("An27_Distance: %.2f m" %(distance))
 					if data[16]==24:
-						print("Tag: %.2d"%(data[16]))
-						print("Distance4: %.2f m" %(distance))
+						print("An24_Distance: %.2f m" %(distance))
 					if data[16]==29:
-						print("Tag: %.2d"%(data[16]))
-						print("Distance4: %.2f m" %(distance))
+						print("An29_Distance: %.2f m" %(distance))
 				else:
 					transmitRangeFailed()
 				noteActivity()
