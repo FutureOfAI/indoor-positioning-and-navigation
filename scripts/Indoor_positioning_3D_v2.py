@@ -280,7 +280,7 @@ def computeRangeAsymmetric():
 
 def loop():
 	global sentAck,receivedAck, timePollAckSentTS, timePollReceivedTS, timePollSentTS, timePollAckReceivedTS, timeRangeReceivedTS, \
-		protocolFailed, data, expectedMsgId, timeRangeSentTS, Same_tag_flag, DistanceFinish_Flag, mutex
+		protocolFailed, data, expectedMsgId, timeRangeSentTS, Same_tag_flag, DistanceFinish_Flag
 
 	if sentAck == False and receivedAck == False:
 		if ((millis() - lastActivity) > C.RESET_PERIOD):
@@ -301,7 +301,7 @@ def loop():
 		if msgId != expectedMsgId:
 			protocolFailed = True
 		if msgId == C.POLL:
-			mutex.acquire()
+			UWB_Mutex.acquire()
 			# DistanceFinish_Flag =1
 			# Same_tag_flag = data[16]
 			protocolFailed = False
@@ -321,7 +321,7 @@ def loop():
 				computeRangeAsymmetric()
 				transmitRangeAcknowledge()
 				distance = (timeComputedRangeTS % C.TIME_OVERFLOW) * C.DISTANCE_OF_RADIO
-				mutex.release()
+				UWB_Mutex.release()
 				if data[16]==23:
 					print("An23_Distance: %.2f m" %(distance))
 				if data[16]==25:
