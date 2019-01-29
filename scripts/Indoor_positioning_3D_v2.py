@@ -31,6 +31,9 @@ UWB_Database_cnt = 0
 IMU_Database_flag = 0
 UWB_Database_flag = 0
 
+# Initialize EKF 6-states parameters 0.01s
+ekf6 = EKF6.EKF_6states(0.01)
+
 # IMU settings
 SETTINGS_FILE = "RTIMULib"
 s = RTIMU.Settings(SETTINGS_FILE)
@@ -43,14 +46,6 @@ imu.setCompassEnable(True)
 poll_interval = imu.IMUGetPollInterval()
 
 # DWM Initialize
-n_23=0
-n_24=0
-n_25=0
-n_26=0
-n_27=0
-n_29=0
-
-
 Position_Flag=0
 DistanceFinish_Flag=0
 Same_tag_flag=0
@@ -295,7 +290,8 @@ def computeRangeAsymmetric():
 	timeComputedRangeTS = (round1 * round2 - reply1 * reply2) / (round1 + round2 + reply1 + reply2)
 
 def loop():
-	global uwb_array,gyro_array,gyro_count,sentAck,n_ekf_start,start,n_23,n_24,n_25,n_26,n_27,n_29,receivedAck, timePollAckSentTS, timePollReceivedTS, timePollSentTS, timePollAckReceivedTS, timeRangeReceivedTS, protocolFailed, data, expectedMsgId,expectedMsgID, timeRangeSentTS,Same_tag_flag,DistanceFinish_Flag,Position_Flag,EKF_start,EKF_message,EKF_New,EKF_Update
+	global sentAck,receivedAck, timePollAckSentTS, timePollReceivedTS, timePollSentTS, timePollAckReceivedTS, timeRangeReceivedTS, \
+		protocolFailed, data, timeRangeSentTS,Same_tag_flag,DistanceFinish_Flag,Position_Flag
 
 	if Position_Flag==0:
 		if sentAck == False and receivedAck == False:
@@ -318,14 +314,12 @@ def loop():
 				Same_tag_flag = data[16]
 				protocolFailed = False
 				timePollReceivedTS = DW1000.getReceiveTimestamp()
-				expectedMsgId = C.RANGE
 				transmitPollAck()
 				noteActivity()
 			elif msgId == C.RANGE :
 				if (DistanceFinish_Flag == 1 and Same_tag_flag == data[16]):
 					DistanceFinish_Flag = 0
 					timeRangeReceivedTS = DW1000.getReceiveTimestamp()
-					expectedMsgId = C.POLL
 					if protocolFailed == False:
 						timePollSentTS = DW1000.getTimeStamp(data, 1)
 						timePollAckReceivedTS = DW1000.getTimeStamp(data, 6)
@@ -355,10 +349,6 @@ def loop():
 					else:
 						transmitRangeFailed()
 					noteActivity()
-
-
-# Initialize EKF 6-states parameters 0.01s
-ekf6 = EKF6.EKF_6states(0.01)
 
 # IMU Thread
 class Get_IMU_Data(threading.Thread):
