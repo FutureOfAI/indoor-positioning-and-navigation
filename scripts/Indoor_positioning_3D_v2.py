@@ -336,6 +336,7 @@ def loop():
 					print("An29_Distance: %.2f m" %(distance))
 			else:
 				transmitRangeFailed()
+				UWB_Mutex.release()
 			noteActivity()
 
 # IMU Thread
