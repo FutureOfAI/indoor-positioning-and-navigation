@@ -291,64 +291,62 @@ def computeRangeAsymmetric():
 
 def loop():
 	global sentAck,receivedAck, timePollAckSentTS, timePollReceivedTS, timePollSentTS, timePollAckReceivedTS, timeRangeReceivedTS, \
-		protocolFailed, data, timeRangeSentTS,Same_tag_flag,DistanceFinish_Flag,Position_Flag
+		protocolFailed, data, timeRangeSentTS,Same_tag_flag,DistanceFinish_Flag
 
-	if Position_Flag==0:
-		if sentAck == False and receivedAck == False:
-			if ((millis() - lastActivity) > C.RESET_PERIOD):
-				Anchor_resetInactive()
-				return
-		if sentAck:
-			sentAck = False
-			msgId = data[0]
-			if Same_tag_flag == data[16]:
-				if msgId == C.POLL_ACK:
-					timePollAckSentTS = DW1000.getTransmitTimestamp()
-					noteActivity()
-		if receivedAck:
-			receivedAck = False
-			data = DW1000.getData(LEN_DATA)
-			msgId = data[0]
-			if msgId == C.POLL:
-				DistanceFinish_Flag =1
-				Same_tag_flag = data[16]
-				protocolFailed = False
-				timePollReceivedTS = DW1000.getReceiveTimestamp()
-				transmitPollAck()
+	if sentAck == False and receivedAck == False:
+		if ((millis() - lastActivity) > C.RESET_PERIOD):
+			Anchor_resetInactive()
+			return
+	if sentAck:
+		sentAck = False
+		msgId = data[0]
+		if msgId == C.POLL_ACK:
+			timePollAckSentTS = DW1000.getTransmitTimestamp()
+			noteActivity()
+	if receivedAck:
+		receivedAck = False
+		data = DW1000.getData(LEN_DATA)
+		msgId = data[0]
+		if msgId == C.POLL:
+			DistanceFinish_Flag =1
+			Same_tag_flag = data[16]
+			protocolFailed = False
+			timePollReceivedTS = DW1000.getReceiveTimestamp()
+			transmitPollAck()
+			noteActivity()
+		elif msgId == C.RANGE :
+			if (DistanceFinish_Flag == 1 and Same_tag_flag == data[16]):
+				DistanceFinish_Flag = 0
+				timeRangeReceivedTS = DW1000.getReceiveTimestamp()
+				if protocolFailed == False:
+					timePollSentTS = DW1000.getTimeStamp(data, 1)
+					timePollAckReceivedTS = DW1000.getTimeStamp(data, 6)
+					timeRangeSentTS = DW1000.getTimeStamp(data, 11)
+					computeRangeAsymmetric()
+					transmitRangeAcknowledge()
+					distance = (timeComputedRangeTS % C.TIME_OVERFLOW) * C.DISTANCE_OF_RADIO
+
+					if data[16]==23:
+						print("Tag: %.2d"%(data[16]))
+						print("Distance1: %.2f m" %(distance))
+					if data[16]==25:
+						print("Tag: %.2d"%(data[16]))
+						print("Distance2: %.2f m" %(distance))
+					if data[16]==26:
+						print("Tag: %.2d"%(data[16]))
+						print("Distance3: %.2f m" %(distance))
+					if data[16]==27:
+						print("Tag: %.2d"%(data[16]))
+						print("Distance4: %.2f m" %(distance))
+					if data[16]==24:
+						print("Tag: %.2d"%(data[16]))
+						print("Distance4: %.2f m" %(distance))
+					if data[16]==29:
+						print("Tag: %.2d"%(data[16]))
+						print("Distance4: %.2f m" %(distance))
+				else:
+					transmitRangeFailed()
 				noteActivity()
-			elif msgId == C.RANGE :
-				if (DistanceFinish_Flag == 1 and Same_tag_flag == data[16]):
-					DistanceFinish_Flag = 0
-					timeRangeReceivedTS = DW1000.getReceiveTimestamp()
-					if protocolFailed == False:
-						timePollSentTS = DW1000.getTimeStamp(data, 1)
-						timePollAckReceivedTS = DW1000.getTimeStamp(data, 6)
-						timeRangeSentTS = DW1000.getTimeStamp(data, 11)
-						computeRangeAsymmetric()
-						transmitRangeAcknowledge()
-						distance = (timeComputedRangeTS % C.TIME_OVERFLOW) * C.DISTANCE_OF_RADIO
-
-						if data[16]==23:
-							print("Tag: %.2d"%(data[16]))
-							print("Distance1: %.2f m" %(distance))
-						if data[16]==25:
-							print("Tag: %.2d"%(data[16]))
-							print("Distance2: %.2f m" %(distance))
-						if data[16]==26:
-							print("Tag: %.2d"%(data[16]))
-							print("Distance3: %.2f m" %(distance))
-						if data[16]==27:
-							print("Tag: %.2d"%(data[16]))
-							print("Distance4: %.2f m" %(distance))
-						if data[16]==24:
-							print("Tag: %.2d"%(data[16]))
-							print("Distance4: %.2f m" %(distance))
-						if data[16]==29:
-							print("Tag: %.2d"%(data[16]))
-							print("Distance4: %.2f m" %(distance))
-					else:
-						transmitRangeFailed()
-					noteActivity()
 
 # IMU Thread
 class Get_IMU_Data(threading.Thread):
