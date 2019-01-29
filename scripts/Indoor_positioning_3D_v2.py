@@ -75,9 +75,6 @@ DW1000.setup(PIN_SS)
 # print("############### ANCHOR ##############")
 DW1000.generalConfiguration("82:17:5B:D5:A9:9A:E2:9B", C.MODE_LONGDATA_RANGE_ACCURACY)
 DW1000.setAntennaDelay(C.ANTENNA_DELAY_RASPI)
-# set DWM1000 mutex for muti-anchors distance measure
-UWB_Mutex = threading.Lock()
-
 
 # Matlab algorithm test data 
 grox_test = np.array([0,0.002741556236919,0.002741555560467])
@@ -285,7 +282,6 @@ def loop():
 	if sentAck == False and receivedAck == False:
 		if ((millis() - lastActivity) > C.RESET_PERIOD):
 			Anchor_resetInactive()
-			UWB_Mutex.acquire()
 			return
 
 	if sentAck:
@@ -302,17 +298,16 @@ def loop():
 		if msgId != expectedMsgId:
 			protocolFailed = True
 		if msgId == C.POLL:
-			UWB_Mutex.acquire()
-			# DistanceFinish_Flag =1
-			# Same_tag_flag = data[16]
+			DistanceFinish_Flag =1
+			Same_tag_flag = data[16]
 			protocolFailed = False
 			timePollReceivedTS = DW1000.getReceiveTimestamp()
 			expectedMsgId = C.RANGE
 			transmitPollAck()
 			noteActivity()
 		elif msgId == C.RANGE :
-			# if (DistanceFinish_Flag == 1 and Same_tag_flag == data[16]):
-			# 	DistanceFinish_Flag = 0
+			if (DistanceFinish_Flag == 1 and Same_tag_flag == data[16]):
+				DistanceFinish_Flag = 0
 			timeRangeReceivedTS = DW1000.getReceiveTimestamp()
 			expectedMsgId = C.POLL
 			if protocolFailed == False:
@@ -322,7 +317,6 @@ def loop():
 				computeRangeAsymmetric()
 				transmitRangeAcknowledge()
 				distance = (timeComputedRangeTS % C.TIME_OVERFLOW) * C.DISTANCE_OF_RADIO
-				UWB_Mutex.release()
 				if data[16]==23:
 					print("An23_Distance: %.2f m" %(distance))
 				if data[16]==25:
@@ -337,7 +331,6 @@ def loop():
 					print("An29_Distance: %.2f m" %(distance))
 			else:
 				transmitRangeFailed()
-				UWB_Mutex.release()
 			noteActivity()
 
 # IMU Thread
