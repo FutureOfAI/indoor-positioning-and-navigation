@@ -285,7 +285,7 @@ def loop():
 	if sentAck == False and receivedAck == False:
 		if ((millis() - lastActivity) > C.RESET_PERIOD):
 			Anchor_resetInactive()
-			print "1"
+			UWB_Mutex.acquire()
 			return
 
 	if sentAck:
@@ -301,7 +301,6 @@ def loop():
 		msgId = data[0]
 		if msgId != expectedMsgId:
 			protocolFailed = True
-			print "2"
 		if msgId == C.POLL:
 			UWB_Mutex.acquire()
 			# DistanceFinish_Flag =1
@@ -340,7 +339,6 @@ def loop():
 				transmitRangeFailed()
 				UWB_Mutex.release()
 			noteActivity()
-			print "3"
 
 # IMU Thread
 class Get_IMU_Data(threading.Thread):
