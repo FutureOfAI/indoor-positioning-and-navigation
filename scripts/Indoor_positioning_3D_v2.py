@@ -26,6 +26,7 @@ import psutil
 # initial database matrix
 IMU_Database = np.zeros([4000,9])
 UWB_Database = np.zeros([4000,6])
+UWB_Databuf = np.zeros(6)
 IMU_Database_cnt = 0
 UWB_Database_cnt = 0
 IMU_Database_flag = 0
@@ -318,17 +319,23 @@ def loop():
 				transmitRangeAcknowledge()
 				distance = (timeComputedRangeTS % C.TIME_OVERFLOW) * C.DISTANCE_OF_RADIO
 				if data[16]==23:
-					print("An23_Distance: %.2f m" %(distance))
+					UWB_Databuf[0] = distance
+					# print("An23_Distance: %.2f m" %(distance))
 				if data[16]==25:
-					print("An25_Distance: %.2f m" %(distance))
+					UWB_Databuf[1] = distance
+					# print("An25_Distance: %.2f m" %(distance))
 				if data[16]==26:
-					print("An26_Distance: %.2f m" %(distance))
+					UWB_Databuf[2] = distance
+					# print("An26_Distance: %.2f m" %(distance))
 				if data[16]==27:
-					print("An27_Distance: %.2f m" %(distance))
+					UWB_Databuf[3] = distance
+					# print("An27_Distance: %.2f m" %(distance))
 				if data[16]==24:
-					print("An24_Distance: %.2f m" %(distance))
+					UWB_Databuf[4] = distance
+					# print("An24_Distance: %.2f m" %(distance))
 				if data[16]==29:
-					print("An29_Distance: %.2f m" %(distance))
+					UWB_Databuf[5] = distance
+					# print("An29_Distance: %.2f m" %(distance))
 			else:
 				transmitRangeFailed()
 			noteActivity()
@@ -399,7 +406,7 @@ class Save_Data(threading.Thread):
 		threading.Thread.__init__(self, name = t_name)
 		self.data = queue
 	def run(self):
-		global IMU_Database_cnt,IMU_Database_flag
+		global IMU_Database_cnt,IMU_Database_flag, UWB_Database_cnt
 		while True:
 			if IMU_Database_cnt>4000:
 				if IMU_Database_flag == 0:
@@ -408,7 +415,11 @@ class Save_Data(threading.Thread):
 					print ("IMU Dabase Full!")
 			else:
 				print (IMU_Database_cnt)
-				pass
+
+			if UWB_Database_cnt<4000:
+				
+			else:
+
 			time.sleep(1)
 		
 
