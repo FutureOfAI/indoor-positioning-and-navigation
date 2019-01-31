@@ -930,12 +930,14 @@ def getReceivePower():
         A = C.A_64MHZ
         corrFac = C.CORRFAC_64MHZ
     estRXPower = 0
+    """
     if ((float(cir) * float(C.TWOPOWER17)) / (float(N) * float(N)) > 0): 
         estRXPower = C.PWR_COEFF2 * math.log10((float(cir) * float(C.TWOPOWER17)) / (float(N) * float(N))) - A
     if estRXPower <= -C.PWR_COEFF:
         return estRXPower
     else:
         estRXPower += (estRXPower + C.PWR_COEFF) * corrFac
+    """
     return estRXPower
 
 
