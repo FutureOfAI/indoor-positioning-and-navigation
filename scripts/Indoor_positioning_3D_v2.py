@@ -407,7 +407,7 @@ class Save_Data(threading.Thread):
 					IMU_Database_flag = 1
 					print ("IMU Dabase Full!")
 			else:
-				#print (IMU_Database_cnt)
+				print (IMU_Database_cnt)
 				pass
 			time.sleep(1)
 		
@@ -423,15 +423,15 @@ def main():
 	queue = Queue()
 	imu_queue = Get_IMU_Data('IMU.', queue)
 	uwb_queue = Get_UWB_Data('UWB.', queue)
-	euler_queue = EKF_Cal_Euler('Euler.',queue)
+	# euler_queue = EKF_Cal_Euler('Euler.',queue)
 	data_queue = Save_Data('Save Data', queue)
 	imu_queue.start()
 	uwb_queue.start()
-	euler_queue.start()
+	# euler_queue.start()
 	data_queue.start()
 	imu_queue.join()
 	uwb_queue.join()
-	euler_queue.join()
+	# euler_queue.join()
 	data_queue.join()
 	print ('All threads terminate!')
 
