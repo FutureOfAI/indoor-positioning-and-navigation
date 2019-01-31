@@ -372,7 +372,7 @@ class Get_UWB_Data(threading.Thread):
 	def run(self):
 		while True:
 			loop()
-			time.sleep(0.001)
+			time.sleep(0.01)
 
 # 6-states EKF thread
 class EKF_Cal_Euler(threading.Thread):
