@@ -409,7 +409,7 @@ class Save_Data(threading.Thread):
 		threading.Thread.__init__(self, name = t_name)
 		self.data = queue
 	def run(self):
-		global IMU_Database_cnt,IMU_Database_flag, UWB_Database_cnt
+		global IMU_Database_cnt,IMU_Database_flag, UWB_Database_cnt, UWB_Database_flag
 		while True:
 			if IMU_Database_cnt>4000:
 				if IMU_Database_flag == 0:
