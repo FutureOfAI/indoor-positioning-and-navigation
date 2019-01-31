@@ -278,7 +278,7 @@ def computeRangeAsymmetric():
 
 def loop():
 	global sentAck,receivedAck, timePollAckSentTS, timePollReceivedTS, timePollSentTS, timePollAckReceivedTS, timeRangeReceivedTS, \
-		protocolFailed, data, expectedMsgId, timeRangeSentTS, Same_tag_flag, DistanceFinish_Flag
+		protocolFailed, data, expectedMsgId, timeRangeSentTS, Same_tag_flag, DistanceFinish_Flag, UWB_Database_cnt
 
 	if sentAck == False and receivedAck == False:
 		if ((millis() - lastActivity) > C.RESET_PERIOD):
@@ -336,6 +336,9 @@ def loop():
 				if data[16]==29:
 					UWB_Databuf[5] = distance
 					# print("An29_Distance: %.2f m" %(distance))
+				if UWB_Database_cnt<4000:
+					UWB_Database[UWB_Database_cnt,:] = np.array([UWB_Databuf[0], UWB_Databuf[1], UWB_Databuf[2], UWB_Databuf[3], UWB_Databuf[4], UWB_Databuf[5]])
+				UWB_Database_cnt = UWB_Database_cnt + 1
 			else:
 				transmitRangeFailed()
 			noteActivity()
@@ -349,16 +352,16 @@ class Get_IMU_Data(threading.Thread):
 		global acc, gro, mag, IMU_Database_cnt
 		while True:
 			if imu.IMURead():
-				# generate IMU data
-				if  IMU_Database_cnt<4000:
-					IMU_Database[IMU_Database_cnt,:] = np.array([acc[0], acc[1], acc[2], gro[0], gro[1], gro[2], mag[0], mag[1], mag[2]])
-				IMU_Database_cnt = IMU_Database_cnt + 1
 				imu_data = imu.getIMUData()
 				acc = imu_data["accel"]
 				# previous gyro data
 				grop = gro
 				gro = imu_data["gyro"]
 				mag = imu_data["compass"]
+				# generate IMU data
+				if  IMU_Database_cnt<4000:
+					IMU_Database[IMU_Database_cnt,:] = np.array([acc[0], acc[1], acc[2], gro[0], gro[1], gro[2], mag[0], mag[1], mag[2]])
+				IMU_Database_cnt = IMU_Database_cnt + 1				
 			time.sleep(0.01)
 
 # DWM Thread
@@ -414,12 +417,15 @@ class Save_Data(threading.Thread):
 					IMU_Database_flag = 1
 					print ("IMU Dabase Full!")
 			else:
-				print (IMU_Database_cnt)
+				print("IMU Counter: %d" %(IMU_Database_cnt))
 
-			if UWB_Database_cnt<4000:
-				
+			if UWB_Database_cnt>4000:
+				if UWB_Database_flag == 0:
+					np.savetxt('output.csv', UWB_Database, delimiter=',')
+					UWB_Database_flag = 1
+					print ("IMU Dabase Full!")
 			else:
-
+				print("UWB Counter: %d" %(UWB_Database_cnt))
 			time.sleep(1)
 		
 
