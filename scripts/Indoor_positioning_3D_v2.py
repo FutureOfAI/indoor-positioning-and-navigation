@@ -423,7 +423,7 @@ class Save_Data(threading.Thread):
 				if UWB_Database_flag == 0:
 					np.savetxt('output.csv', UWB_Database, delimiter=',')
 					UWB_Database_flag = 1
-					print ("IMU Dabase Full!")
+					print ("UWB Dabase Full!")
 			else:
 				print("UWB Counter: %d" %(UWB_Database_cnt))
 			time.sleep(1)
