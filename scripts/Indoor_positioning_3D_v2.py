@@ -413,7 +413,7 @@ class Save_Data(threading.Thread):
 		while True:
 			if IMU_Database_cnt>4000:
 				if IMU_Database_flag == 0:
-					np.savetxt('output.csv', IMU_Database, delimiter=',')
+					np.savetxt('output_IMU.csv', IMU_Database, delimiter=',')
 					IMU_Database_flag = 1
 					print ("IMU Dabase Full!")
 			else:
@@ -421,7 +421,7 @@ class Save_Data(threading.Thread):
 
 			if UWB_Database_cnt>400:
 				if UWB_Database_flag == 0:
-					np.savetxt('output.csv', UWB_Database, delimiter=',')
+					np.savetxt('output_UWB.csv', UWB_Database, delimiter=',')
 					UWB_Database_flag = 1
 					print ("UWB Dabase Full!")
 			else:
