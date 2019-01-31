@@ -336,7 +336,7 @@ def loop():
 				if data[16]==29:
 					UWB_Databuf[5] = distance
 					# print("An29_Distance: %.2f m" %(distance))
-				if UWB_Database_cnt<4000:
+				if UWB_Database_cnt<400:
 					UWB_Database[UWB_Database_cnt,:] = np.array([UWB_Databuf[0], UWB_Databuf[1], UWB_Databuf[2], UWB_Databuf[3], UWB_Databuf[4], UWB_Databuf[5]])
 				UWB_Database_cnt = UWB_Database_cnt + 1
 			else:
@@ -419,7 +419,7 @@ class Save_Data(threading.Thread):
 			else:
 				print("IMU Counter: %d" %(IMU_Database_cnt))
 
-			if UWB_Database_cnt>4000:
+			if UWB_Database_cnt>400:
 				if UWB_Database_flag == 0:
 					np.savetxt('output.csv', UWB_Database, delimiter=',')
 					UWB_Database_flag = 1
