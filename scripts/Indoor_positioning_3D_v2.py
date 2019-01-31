@@ -25,7 +25,7 @@ import psutil
 
 # initial database matrix
 IMU_Database = np.zeros([4000,9])
-UWB_Database = np.zeros([4000,6])
+UWB_Database = np.zeros([400,6])
 UWB_Databuf = np.zeros(6)
 IMU_Database_cnt = 0
 UWB_Database_cnt = 0
