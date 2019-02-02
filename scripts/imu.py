@@ -216,9 +216,8 @@ while True:
             lcd.clear()
             lcd.message(imu_sentence)
             if Eluer_buf_cnt<100:
-              # Eluer_buf[Eluer_buf_cnt,:] = np.array([yaw, heading, roll, pitch])
-            # Eluer_buf_cnt = Eluer_buf_cnt + 1
-              pass
+              Eluer_buf[Eluer_buf_cnt,:] = np.array([yaw, heading, roll, pitch])
+            Eluer_buf_cnt = Eluer_buf_cnt + 1
 
             t_print = hack
 
@@ -228,6 +227,6 @@ while True:
             Eluer_buf_flag = 1
             print ("Euler Dabase Full!")
         else:
-          print yaw,heading,roll,pitch
+          print imu_sentence
 
     time.sleep(poll_interval*1.0/1000.0)
