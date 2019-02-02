@@ -184,7 +184,7 @@ while True:
             sock.sendto(str(hack), (MON_IP, MON_PORT))
 
             # iihdm magnetic heading
-            hdm = "Z:" + str(yaw) # [:-2] means delete the last two bits
+            hdm = "Z:" + str(round(yaw))[:-2] # [:-2] means delete the last two bits
             iihdm = hdm
 
             # iihdt true heading
@@ -202,7 +202,7 @@ while True:
 
             # assemble the sentence
             #imu_sentence = iihdm + '\r\n' + iihdt + '\r\n' + iixdr + '\r\n' + tirot + '\r\n'
-            imu_sentence = iihdm + ' ' + iihdt + ' ' + iixdr
+            imu_sentence = iihdm + ' ' + iixdr
 
             # to imu bus
             f = open('imu_bus', 'w')
@@ -223,13 +223,13 @@ while True:
 
             t_print = hack
 
-        if Eluer_buf_cnt>100:
-          print np.average(Eluer_buf[:,0])
-          # if Eluer_buf_flag == 0:
-          #   np.savetxt('output_Euler.csv', Eluer_buf, delimiter=',')
-          #   Eluer_buf_flag = 1
-          #   print ("Euler Dabase Full!")
-        else:
-          print imu_sentence
+        # if Eluer_buf_cnt>100:
+        #   print np.average(Eluer_buf[:,0])
+        #   # if Eluer_buf_flag == 0:
+        #   #   np.savetxt('output_Euler.csv', Eluer_buf, delimiter=',')
+        #   #   Eluer_buf_flag = 1
+        #   #   print ("Euler Dabase Full!")
+        # else:
+        #   print imu_sentence
 
     time.sleep(poll_interval*1.0/1000.0)
