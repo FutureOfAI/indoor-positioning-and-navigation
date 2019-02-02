@@ -228,6 +228,6 @@ while True:
             Eluer_buf_flag = 1
             print ("Euler Dabase Full!")
         else:
-          print yaw,roll,pitch
+          print yaw,heading,roll,pitch
 
     time.sleep(poll_interval*1.0/1000.0)
