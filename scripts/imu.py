@@ -196,7 +196,7 @@ while True:
 
             # assemble the sentence
             #imu_sentence = iihdm + '\r\n' + iihdt + '\r\n' + iixdr + '\r\n' + tirot + '\r\n'
-            imu_sentence = iihdm + ' ' +iihdt ' ' + iixdr
+            imu_sentence = iihdm + ' ' + iihdt + ' ' + iixdr
 
             # to imu bus
             f = open('imu_bus', 'w')
