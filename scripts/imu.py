@@ -43,7 +43,7 @@ s = RTIMU.Settings(SETTINGS_FILE)
 imu = RTIMU.RTIMU(s)
 
 # data buffer
-Eluer_buf = np.array([100,4])
+Eluer_buf = np.zeros([100,4])
 Eluer_buf_cnt = 0
 Eluer_buf_flag = 0
 
