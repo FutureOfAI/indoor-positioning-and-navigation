@@ -222,10 +222,11 @@ while True:
             t_print = hack
 
         if Eluer_buf_cnt>100:
-          if Eluer_buf_flag == 0:
-            np.savetxt('output_Euler.csv', Eluer_buf, delimiter=',')
-            Eluer_buf_flag = 1
-            print ("Euler Dabase Full!")
+          print np.average(Eluer_buf[:,0])
+          # if Eluer_buf_flag == 0:
+          #   np.savetxt('output_Euler.csv', Eluer_buf, delimiter=',')
+          #   Eluer_buf_flag = 1
+          #   print ("Euler Dabase Full!")
         else:
           print imu_sentence
 
