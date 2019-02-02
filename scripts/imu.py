@@ -182,7 +182,7 @@ while True:
             iihdm = hdm
 
             # iihdt true heading
-            hdt = "IIHDT," + str(round(heading))[:-2]
+            hdt = "IIHDT," + str(heading)
             iihdt = hdt
 
             # iixdr ahrs data
@@ -196,7 +196,7 @@ while True:
 
             # assemble the sentence
             #imu_sentence = iihdm + '\r\n' + iihdt + '\r\n' + iixdr + '\r\n' + tirot + '\r\n'
-            imu_sentence = iihdm + ' ' + iixdr
+            imu_sentence = iihdm + ' ' +iihdt ' ' + iixdr
 
             # to imu bus
             f = open('imu_bus', 'w')
