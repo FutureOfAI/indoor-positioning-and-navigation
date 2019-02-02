@@ -218,6 +218,7 @@ while True:
             if Eluer_buf_cnt<100:
               # Eluer_buf[Eluer_buf_cnt,:] = np.array([yaw, heading, roll, pitch])
             # Eluer_buf_cnt = Eluer_buf_cnt + 1
+              pass
 
             t_print = hack
 
