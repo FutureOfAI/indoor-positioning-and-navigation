@@ -216,6 +216,8 @@ while True:
             lcd.clear()
             lcd.message(imu_sentence)
             if Eluer_buf_cnt<100:
+              if yaw>180:
+                yaw = yaw-360
               Eluer_buf[Eluer_buf_cnt,:] = np.array([yaw, heading, roll, pitch])
             Eluer_buf_cnt = Eluer_buf_cnt + 1
 
