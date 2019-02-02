@@ -226,7 +226,7 @@ while True:
             np.savetxt('output_Euler.csv', Eluer_buf, delimiter=',')
             Eluer_buf_flag = 1
             print ("Euler Dabase Full!")
-        else
+        else:
           print imu_sentence
 
     time.sleep(poll_interval*1.0/1000.0)
