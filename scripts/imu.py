@@ -5,6 +5,7 @@ import RTIMU
 import os.path
 import time
 import math
+import numpy as np
 import operator
 import socket
 import os
@@ -40,6 +41,11 @@ SETTINGS_FILE = "RTIMULib"
 
 s = RTIMU.Settings(SETTINGS_FILE)
 imu = RTIMU.RTIMU(s)
+
+# data buffer
+Eluer_buf = np.array([100,4])
+Eluer_buf_cnt = 0
+Eluer_buf_flag = 0
 
 # offsets
 yawoff = 0.0
@@ -206,11 +212,21 @@ while True:
             # To kplex
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.sendto(imu_sentence, (IMU_IP, IMU_PORT))
-            print imu_sentence
             #print ekf6.DCM_calculate()
             lcd.clear()
             lcd.message(imu_sentence)
+            if Eluer_buf_cnt<100:
+              Eluer_buf[Eluer_buf_cnt,:] = np.array([yaw, heading, roll, pitch])
+            Eluer_buf_cnt = Eluer_buf_cnt + 1
 
             t_print = hack
+
+        if Eluer_buf_cnt>100:
+          if Eluer_buf_flag == 0:
+            np.savetxt('output_Euler.csv', Eluer_buf, delimiter=',')
+            Eluer_buf_flag = 1
+            print ("Euler Dabase Full!")
+        else
+          print imu_sentence
 
     time.sleep(poll_interval*1.0/1000.0)
