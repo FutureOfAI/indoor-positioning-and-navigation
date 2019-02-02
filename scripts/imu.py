@@ -178,7 +178,7 @@ while True:
             sock.sendto(str(hack), (MON_IP, MON_PORT))
 
             # iihdm magnetic heading
-            hdm = "Z:" + str(round(yaw))[:-2] # [:-2] means delete the last two bits
+            hdm = "Z:" + str(round(yaw))[:-1] # [:-2] means delete the last two bits
             iihdm = hdm
 
             # iihdt true heading
