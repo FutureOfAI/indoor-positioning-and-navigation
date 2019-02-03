@@ -204,7 +204,7 @@ class EKF_6states(object):
     def TRIAD(self, ax, ay, az, mx, my, mz):
         acc_g = np.array([0, 0, -9.8])
         mag_E = np.array([self._Mag*np.cos(self._Angle_I)*np.sin(self._Angle_D), self._Mag*np.cos(self._Angle_I)*np.cos(self._Angle_D), -self._Mag*np.sin(self._Angle_I)])
-
+        print mag_E
         a_B = np.array([ax, ay, az])
         q_B = self.normalize(a_B)
         m_B = np.array([mx, my, mz])
