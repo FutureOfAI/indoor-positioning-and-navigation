@@ -222,7 +222,7 @@ class EKF_6states(object):
         # print (m_B_u)
         r_B_n = np.cross(q_B, m_B_u)
         r_B = self.normalize(r_B_n)
-        print (r_B_n)
+        # print (r_B_n)
         s_B = np.cross(q_B, r_B)
         M_B = np.array([s_B, r_B, q_B])
         # print (M_B)
