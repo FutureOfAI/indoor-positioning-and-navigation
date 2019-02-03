@@ -2,7 +2,6 @@
 This python module contains 6-states EKF's pridict, update and measurement function
 output is Euler angle.
 """
-
 # import sys, getopt
 
 # sys.path.append('.')
@@ -51,6 +50,11 @@ class EKF_6states(object):
         return s6_P00_z, QE_B_m
 
     def Update(self, ax, ay, az, mx, my, mz, QE_B_m, s6_P00_z, s6_H, s6_R):
+
+        ax = ax*9.8
+        ay = ay*9.8
+        az = -az*9.8
+        
         C_E_B_e = self.TRIAD(ax, ay, az, mx, my, mz)
         tmp = self.rotMat2euler(C_E_B_e.T)
         C_E_B_e = self.euler2rotMat(-tmp[1], tmp[0], tmp[2])
@@ -91,12 +95,12 @@ class EKF_6states(object):
     # get direction cosine matrix from gyroscopemeter
     def DCM_calculate(self, wxp, wyp, wzp, wx, wy, wz, bgx_h, bgy_h, bgz_h, QE_B_m):
 
-        # wx = (1+0.254)*wx
-        # wxp = (1+0.254)*wxp
-        # wy = (1+0.246)*wy
-        # wyp = (1+0.246)*wyp
-        # wz = (1+0.24)*wz
-        # wzp = (1+0.24)*wzp
+        wx = (1+0.254)*wx
+        wxp = (1+0.254)*wxp
+        wy = (1+0.246)*wy
+        wyp = (1+0.246)*wyp
+        wz = (1+0.24)*wz
+        wzp = (1+0.24)*wzp
 
         wx = wx - bgx_h
         wy = wy - bgy_h
