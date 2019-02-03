@@ -321,7 +321,7 @@ class EKF_Cal_Euler(threading.Thread):
 			dt = EKF_start_time-EKF_end_time
 			print (Angle*r2d, dt)
 			#print (psutil.cpu_percent())
-			time.sleep(0.01)
+			time.sleep(0.1)
 
 # Save data Thread
 class Save_Data(threading.Thread):
