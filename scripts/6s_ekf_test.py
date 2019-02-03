@@ -1,10 +1,11 @@
 """
 This python module is used to positioning in indoor environment based on UWB and IMU
+PyScripter code
 """
 import sys, getopt
 
 sys.path.append('.')
-import RTIMU
+##import RTIMU
 import os.path
 import threading
 import time
@@ -16,12 +17,12 @@ import numpy as np
 from pyquaternion import Quaternion
 from numpy import linalg as LA
 import EKF_6states as EKF6
-from Queue import Queue
-import DW1000
-import monotonic
-import DW1000Constants as C
-import RPi.GPIO as GPIO 
-import psutil
+from queue import Queue
+##import DW1000
+##import monotonic
+##import DW1000Constants as C
+##import RPi.GPIO as GPIO
+##import psutil
 
 # initial database matrix
 IMU_Database = np.zeros([4000,9])
@@ -36,21 +37,21 @@ UWB_Database_flag = 0
 ekf6 = EKF6.EKF_6states(0.01)
 
 # IMU settings
-SETTINGS_FILE = "RTIMULib"
-s = RTIMU.Settings(SETTINGS_FILE)
-imu = RTIMU.RTIMU(s)
-if (not imu.IMUInit()):
-	print ("IMU Initialize Failed.")
-imu.setGyroEnable(True)
-imu.setAccelEnable(True)
-imu.setCompassEnable(True)
-poll_interval = imu.IMUGetPollInterval()
+##SETTINGS_FILE = "RTIMULib"
+##s = RTIMU.Settings(SETTINGS_FILE)
+##imu = RTIMU.RTIMU(s)
+##if (not imu.IMUInit()):
+##	print ("IMU Initialize Failed.")
+##imu.setGyroEnable(True)
+##imu.setAccelEnable(True)
+##imu.setCompassEnable(True)
+##poll_interval = imu.IMUGetPollInterval()
 
 # DWM Initialize
 DistanceFinish_Flag=0
 Same_tag_flag=0
 lastActivity = 0
-expectedMsgId = C.POLL
+##expectedMsgId = C.POLL
 protocolFailed = False
 sentAck = False
 receivedAck = False
@@ -63,32 +64,32 @@ timeRangeReceivedTS = 0
 timePollSentTS = 0
 timeRangeSentTS = 0
 timeComputedRangeTS = 0
-REPLY_DELAY_TIME_US = 7000 
+REPLY_DELAY_TIME_US = 7000
 
-PIN_RST = 17
-PIN_IRQ = 19
-PIN_SS = 27
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(PIN_RST,GPIO.IN)
-DW1000.begin(PIN_IRQ)
-DW1000.setup(PIN_SS)
-# print("DW1000 initialized")
-# print("############### ANCHOR ##############")
-DW1000.generalConfiguration("82:17:5B:D5:A9:9A:E2:9B", C.MODE_LONGDATA_RANGE_ACCURACY)
-DW1000.setAntennaDelay(C.ANTENNA_DELAY_RASPI)
+##PIN_RST = 17
+##PIN_IRQ = 19
+##PIN_SS = 27
+##GPIO.setmode(GPIO.BCM)
+##GPIO.setup(PIN_RST,GPIO.IN)
+##DW1000.begin(PIN_IRQ)
+##DW1000.setup(PIN_SS)
+### print("DW1000 initialized")
+### print("############### ANCHOR ##############")
+##DW1000.generalConfiguration("82:17:5B:D5:A9:9A:E2:9B", C.MODE_LONGDATA_RANGE_ACCURACY)
+##DW1000.setAntennaDelay(C.ANTENNA_DELAY_RASPI)
 
-# Matlab algorithm test data 
-grox_test = np.array([0,0.002741556236919,0.002741555560467])
-groy_test = np.array([0,0.005483112473838,0.005483111120934])
-groz_test = np.array([0,0.008224668710756,0.008224666681400])
+# Matlab algorithm test data
+grox_test = np.array([0,0.002741556236919,0.002741555560467,0.002741554613434])
+groy_test = np.array([0,0.005483112473838,0.005483111120934,0.005483109226868])
+groz_test = np.array([0,0.008224668710756,0.008224666681400,0.008224663840303])
 
-accx_test = np.array([0,-0.001074778557705,-0.001612233961899])
-accy_test = np.array([0,0.0005371683061720239,0.0008056197943218936])
-accz_test = np.array([-9.8,-9.8,-9.8])
+accx_test = np.array([0,-0.001074778557705,-0.001612233961899,-0.002149733360578])
+accy_test = np.array([0,0.0005371683061720239,0.0008056197943218936,0.001073982796397])
+accz_test = np.array([-9.8,-9.8,-9.8,-9.8])
 
-magx_test = np.array([2.877312458709545,2.868357795017813,2.863880397500370])
-magy_test = np.array([35.997397931215560,35.999386810200676,36.000380469412846])
-magz_test = np.array([27.659836572125170,27.658178118764624,27.657348736390680])
+magx_test = np.array([2.877312458709545,2.868357795017813,2.863880397500370,2.859402956878387])
+magy_test = np.array([35.997397931215560,35.999386810200676,36.000380469412846,36.001373608317150])
+magz_test = np.array([-27.659836572125170,-27.658178118764624,-27.657348736390680,27.656519250342413])
 # IMU initial params
 acc = np.zeros(3)
 grop = np.zeros(3)
@@ -96,8 +97,8 @@ gro = np.zeros(3)
 mag = np.zeros(3)
 
 # gyro err and bias
-gyro_err_flag = 1
-gyro_bias_flag = 1
+gyro_err_flag = 0
+gyro_bias_flag = 0
 
 # EKF Initial params
 r2d = 180/np.pi
@@ -184,20 +185,20 @@ def millis():
 	"""
 	This function returns the value (in milliseconds) of a clock which never goes backwards. It detects the inactivity of the chip and
 	is used to avoid having the chip stuck in an undesirable state.
-	"""    
+	"""
 	return int(round(monotonic.monotonic() * C.MILLISECONDS))
 
 def handleSent():
 	"""
-	This is a callback called from the module's interrupt handler when a transmission was successful. 
+	This is a callback called from the module's interrupt handler when a transmission was successful.
 	It sets the sentAck variable as True so the loop can continue.
-	"""            
+	"""
 	global sentAck
 	sentAck = True
 
 def handleReceived():
 	"""
-	This is a callback called from the module's interrupt handler when a reception was successful. 
+	This is a callback called from the module's interrupt handler when a reception was successful.
 	It sets the received receivedAck as True so the loop can continue.
 	"""
 	global receivedAck
@@ -206,19 +207,19 @@ def handleReceived():
 def noteActivity():
 	"""
 	This function records the time of the last activity so we can know if the device is inactive or not.
-	"""        
+	"""
 	global lastActivity
 	lastActivity = millis()
 
 def Anchor_resetInactive():
 	"""
 	This function restarts the default polling operation when the device is deemed inactive.
-	"""    
+	"""
 	global expectedMsgId
-	DW1000.generalConfiguration("82:17:5B:D5:A9:9A:E2:9B", C.MODE_LONGDATA_RANGE_ACCURACY) 
+	DW1000.generalConfiguration("82:17:5B:D5:A9:9A:E2:9B", C.MODE_LONGDATA_RANGE_ACCURACY)
 	DW1000.registerCallback("handleSent", handleSent)
 	DW1000.registerCallback("handleReceived", handleReceived)
-	DW1000.setAntennaDelay(C.ANTENNA_DELAY_RASPI)       
+	DW1000.setAntennaDelay(C.ANTENNA_DELAY_RASPI)
 	expectedMsgId = C.POLL
 	#print("run")
 	receiver()
@@ -226,8 +227,8 @@ def Anchor_resetInactive():
 
 def transmitPollAck():
 	"""
-	This function sends the polling acknowledge message which is used to confirm the reception of the polling message. 
-	"""        
+	This function sends the polling acknowledge message which is used to confirm the reception of the polling message.
+	"""
 	global data
 	DW1000.newTransmit()
 	data[0] = C.POLL_ACK
@@ -249,7 +250,7 @@ def transmitRangeAcknowledge():
 def transmitRangeFailed():
 	"""
 	This functions sends the range failed message which tells the tag that the ranging function has failed and to start another ranging transmission.
-	"""    
+	"""
 	global data
 	DW1000.newTransmit()
 	data[0] = C.RANGE_FAILED
@@ -381,28 +382,49 @@ class EKF_Cal_Euler(threading.Thread):
 		self.data = queue
 	def run(self):
 		global w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, bgx_h, bgy_h, bgz_h, QE_B_m, s6_P00_z, dtheda_xh, dtheda_yh, dtheda_zh
-		while True:
+		for i in range(1,4):
 			EKF_start_time = time.time()
+			# test data
+			w_EB_B_xm = grox_test[i-1]
+			w_EB_B_ym = groy_test[i-1]
+			w_EB_B_zm = groz_test[i-1]
+
+			gro[0] = grox_test[i]
+			gro[1] = groy_test[i]
+			gro[2] = groz_test[i]
+			acc[0] = accx_test[i]
+			acc[1] = accy_test[i]
+			acc[2] = accz_test[i]
+			mag[0] = magx_test[i]
+			mag[1] = magy_test[i]
+			mag[2] = magz_test[i]
+
 			# predict
 			s6_P00_z, QE_B_m = ekf6.Predict(w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, gro[0], gro[1], gro[2], bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z)
+			# print (s6_P00_z)
+			# print (QE_B_m[0],QE_B_m[1],QE_B_m[2],QE_B_m[3])
 			# update
 			s6_P00_z, s6_z_update = ekf6.Update(acc[0], acc[1], acc[2], mag[0], mag[1], mag[2], QE_B_m, s6_P00_z, s6_H, s6_R)
+			# print (s6_P00_z, s6_z_update)
 			# measurement
 			dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm = ekf6.Measurement(dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, s6_z_update, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm)
+			# print (dtheda_xh, dtheda_yh, dtheda_zh)
 			# calculate euler angle
 			# q2 = -dtheda_xh/2
 			# q3 = -dtheda_yh/2
 			# q4 = -dtheda_zh/2
-			# q1 = np.sqrt(1-np.square(q2)-np.square(q3)-np.square(q4))
+			# q1 = np.sqrt(1-np.square(q2)-np.square(q3)-np.square(q4)) @@
 			DCM_err = ekf6.euler2rotMat(dtheda_xh, dtheda_yh, dtheda_zh)
+			# print (DCM_err)
 			# dQ2 = Quaternion(q1, q2, q3, q4)
 			dQ2 = ekf6.rotMat2quatern(DCM_err)
-			QE_B_m = dQ2.normalised * QE_B_m.normalised
+			# print (dQ2[0],dQ2[1],dQ2[2],dQ2[3])
+			QE_B_m = QE_B_m.normalised * dQ2.normalised
+			# print (QE_B_m[0],QE_B_m[1],QE_B_m[2],QE_B_m[3])
 			Angle = ekf6.quatern2euler(QE_B_m)
 			EKF_end_time = time.time()
 			dt = EKF_start_time-EKF_end_time
-			# print w_EB_B_xm,w_EB_B_ym,w_EB_B_zm
-			print (Angle*r2d)
+			# print (Angle)
 			# print (psutil.cpu_percent())
 			time.sleep(0.01)
 
@@ -430,26 +452,26 @@ class Save_Data(threading.Thread):
 			else:
 				print("UWB Counter: %d" %(UWB_Database_cnt))
 			time.sleep(1)
-		
+
 
 # main Thread
 def main():
 	# initialize DWM settings
-	DW1000.registerCallback("handleSent", handleSent)
-	DW1000.registerCallback("handleReceived", handleReceived)
-	receiver()
-	noteActivity()
+##	DW1000.registerCallback("handleSent", handleSent)
+##	DW1000.registerCallback("handleReceived", handleReceived)
+##	receiver()
+##	noteActivity()
 
 	queue = Queue()
-	imu_queue = Get_IMU_Data('IMU.', queue)
+	# imu_queue = Get_IMU_Data('IMU.', queue)
 	# uwb_queue = Get_UWB_Data('UWB.', queue)
 	euler_queue = EKF_Cal_Euler('Euler.',queue)
 	# data_queue = Save_Data('Save Data', queue)
-	imu_queue.start()
+	# imu_queue.start()
 	# uwb_queue.start()
 	euler_queue.start()
 	# data_queue.start()
-	imu_queue.join()
+	# imu_queue.join()
 	# uwb_queue.join()
 	euler_queue.join()
 	# data_queue.join()

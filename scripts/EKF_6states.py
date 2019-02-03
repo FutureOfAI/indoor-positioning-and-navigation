@@ -51,22 +51,26 @@ class EKF_6states(object):
 
     def Update(self, ax, ay, az, mx, my, mz, QE_B_m, s6_P00_z, s6_H, s6_R):
 
-        ax = ax*9.8
-        ay = ay*9.8
-        az = -az*9.8
+        # ax = ax*9.8
+        # ay = ay*9.8
+        # az = -az*9.8
 
         C_E_B_e = self.TRIAD(ax, ay, az, mx, my, mz)
+        # print (C_E_B_e)
         tmp = self.rotMat2euler(C_E_B_e.T)
         C_E_B_e = self.euler2rotMat(-tmp[1], tmp[0], tmp[2])
+        # print (tmp)
         # tmp = self.AccMag2euler(ax, ay, az, mx, my)
         # C_E_B_e = self.euler2rotMat(tmp[0],tmp[1],tmp[2])
         Q_E_B_e = self.rotMat2quatern(C_E_B_e)
-
-        Q_B_E_m = Quaternion(QE_B_m[0], -QE_B_m[1], -QE_B_m[2], -QE_B_m[3])
+        # print (Q_E_B_e[0],Q_E_B_e[1],Q_E_B_e[2],Q_E_B_e[3]) @@
+        Q_B_E_m = -Quaternion(QE_B_m[0], -QE_B_m[1], -QE_B_m[2], -QE_B_m[3])
         dQ = Q_E_B_e.normalised * Q_B_E_m.normalised
+        # print (dQ[0],dQ[1],dQ[2],dQ[3])
         d_theta = self.quatern2euler(dQ.normalised)
         # Form the measurement residuals or mu
         s6_Mu_z = d_theta
+        # print (s6_Mu_z)
         # Computer the Kalman filter gain matrix K
         s6_K_z = s6_P00_z.dot(s6_H.T).dot( LA.inv(s6_H.dot(s6_P00_z).dot(s6_H.T) + s6_R) )
         # Computer the correction vectors
@@ -95,12 +99,12 @@ class EKF_6states(object):
     # get direction cosine matrix from gyroscopemeter
     def DCM_calculate(self, wxp, wyp, wzp, wx, wy, wz, bgx_h, bgy_h, bgz_h, QE_B_m):
 
-        wx = (1+0.254)*wx
-        wxp = (1+0.254)*wxp
-        wy = (1+0.246)*wy
-        wyp = (1+0.246)*wyp
-        wz = (1+0.24)*wz
-        wzp = (1+0.24)*wzp
+        # wx = (1+0.254)*wx
+        # wxp = (1+0.254)*wxp
+        # wy = (1+0.246)*wy
+        # wyp = (1+0.246)*wyp
+        # wz = (1+0.24)*wz
+        # wzp = (1+0.24)*wzp
 
         wx = wx - bgx_h
         wy = wy - bgy_h
@@ -124,6 +128,7 @@ class EKF_6states(object):
         delta_Q = Quaternion(q1, -q2, -q3, -q4)
         QE_B_m = delta_Q.normalised * QE_B_m.normalised
         DC_E_B_m = self.quatern2rotMat(QE_B_m)
+        # print (QE_B_m[0],QE_B_m[1],QE_B_m[2],QE_B_m[3])
         return DC_E_B_m, QE_B_m
 
     # Get Rotation matrix from euler angle in rad
@@ -168,7 +173,8 @@ class EKF_6states(object):
         K[3,3] = (1/3)*( R[0,0] + R[1,1] + R[2,2] )
 
         vals,vecs = LA.eigh(K)
-        q = Quaternion([vecs[3,3], vecs[0,3], vecs[1,3], vecs[2,3]])
+        # print (vecs) @@
+        q = -Quaternion([vecs[3,3], vecs[0,3], vecs[1,3], vecs[2,3]])
         return q
 
     def rotMat2euler(self, R):
@@ -205,17 +211,21 @@ class EKF_6states(object):
         acc_g = np.array([0, 0, -9.8])
         mag_E = np.array([self._Mag*np.cos(self._Angle_I)*np.sin(self._Angle_D), self._Mag*np.cos(self._Angle_I)*np.cos(self._Angle_D), -self._Mag*np.sin(self._Angle_I)])
 
-        Rot_mag = self.euler2rotMat(0,np.pi,0)
-        [mx,my,mz] = Rot_mag.dot(np.array([mx,my,mz]))
+        # Rot_mag = self.euler2rotMat(0,np.pi,0)
+        # [mx,my,mz] = Rot_mag.dot(np.array([mx,my,mz]))
 
         a_B = np.array([ax, ay, az])
         q_B = self.normalize(a_B)
+        # print (q_B)
         m_B = np.array([mx, my, mz])
         m_B_u = self.normalize(m_B)
+        # print (m_B_u)
         r_B_n = np.cross(q_B, m_B_u)
         r_B = self.normalize(r_B_n)
+        print (r_B_n)
         s_B = np.cross(q_B, r_B)
         M_B = np.array([s_B, r_B, q_B])
+        # print (M_B)
 
         q_E = self.normalize(acc_g)
         mag_E_u = self.normalize(mag_E)
