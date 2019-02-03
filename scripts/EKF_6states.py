@@ -86,9 +86,9 @@ class EKF_6states(object):
         bgy_h = bgy_h + s6_z_update[4]
         bgz_h = bgz_h + s6_z_update[5]
 
-        # w_EB_B_xm = w_EB_B_xm - bgx_h
-        # w_EB_B_ym = w_EB_B_ym - bgy_h
-        # w_EB_B_zm = w_EB_B_zm - bgz_h
+        w_EB_B_xm = w_EB_B_xm - bgx_h
+        w_EB_B_ym = w_EB_B_ym - bgy_h
+        w_EB_B_zm = w_EB_B_zm - bgz_h
 
         return dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm
 
