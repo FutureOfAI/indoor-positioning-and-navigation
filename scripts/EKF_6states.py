@@ -54,7 +54,7 @@ class EKF_6states(object):
         ax = ax*9.8
         ay = ay*9.8
         az = -az*9.8
-        
+
         C_E_B_e = self.TRIAD(ax, ay, az, mx, my, mz)
         tmp = self.rotMat2euler(C_E_B_e.T)
         C_E_B_e = self.euler2rotMat(-tmp[1], tmp[0], tmp[2])
@@ -78,9 +78,9 @@ class EKF_6states(object):
 
     def Measurement(self, dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, s6_z_update, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm):
 
-        dtheda_xh = s6_z_update[0]
-        dtheda_yh = s6_z_update[1]
-        dtheda_zh = s6_z_update[2]
+        dtheda_xh = dtheda_xh + s6_z_update[0]
+        dtheda_yh = dtheda_yh + s6_z_update[1]
+        dtheda_zh = dtheda_zh + s6_z_update[2]
 
         bgx_h = bgx_h + s6_z_update[3]
         bgy_h = bgy_h + s6_z_update[4]
