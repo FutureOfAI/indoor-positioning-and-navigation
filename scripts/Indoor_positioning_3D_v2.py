@@ -411,7 +411,7 @@ class Save_Data(threading.Thread):
 	def run(self):
 		global IMU_Database_cnt,IMU_Database_flag, UWB_Database_cnt, UWB_Database_flag
 		while True:
-			if IMU_Database_cnt>3000:
+			if IMU_Database_cnt>1000:
 				if IMU_Database_flag == 0:
 					np.savetxt('output_IMU.csv', IMU_Database, delimiter=',')
 					IMU_Database_flag = 1
