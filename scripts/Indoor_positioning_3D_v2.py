@@ -24,7 +24,7 @@ import RPi.GPIO as GPIO
 import psutil
 
 # initial database matrix
-IMU_Database = np.zeros([4000,9])
+IMU_Database = np.zeros([4000,12])
 UWB_Database = np.zeros([400,6])
 UWB_Databuf = np.zeros(6)
 IMU_Database_cnt = 0
@@ -94,6 +94,7 @@ acc = np.zeros(3)
 grop = np.zeros(3)
 gro = np.zeros(3)
 mag = np.zeros(3)
+pose = np.zeros(3)
 
 # gyro err and bias
 gyro_err_flag = 1
@@ -349,7 +350,7 @@ class Get_IMU_Data(threading.Thread):
 		threading.Thread.__init__(self, name = t_name)
 		self.data = queue
 	def run(self):
-		global acc, gro, mag, IMU_Database_cnt
+		global acc, gro, mag, pos, IMU_Database_cnt
 		while True:
 			if imu.IMURead():
 				imu_data = imu.getIMUData()
@@ -358,9 +359,10 @@ class Get_IMU_Data(threading.Thread):
 				grop = gro
 				gro = imu_data["gyro"]
 				mag = imu_data["compass"]
+				pose = imu_data["fusionPose"]
 				# generate IMU data
 				if  IMU_Database_cnt<4000:
-					IMU_Database[IMU_Database_cnt,:] = np.array([acc[0], acc[1], acc[2], gro[0], gro[1], gro[2], mag[0], mag[1], mag[2]])
+					IMU_Database[IMU_Database_cnt,:] = np.array([acc[0], acc[1], acc[2], gro[0], gro[1], gro[2], mag[0], mag[1], mag[2], pose[0], pose[1], pose[2]])
 				IMU_Database_cnt = IMU_Database_cnt + 1
 			time.sleep(0.01)
 
@@ -386,7 +388,8 @@ class EKF_Cal_Euler(threading.Thread):
 			# predict
 			s6_P00_z, QE_B_m = ekf6.Predict(w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, gro[0], gro[1], gro[2], bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z)
 			# update
-			s6_P00_z, s6_z_update = ekf6.Update(acc[0], acc[1], acc[2], mag[0], mag[1], mag[2], QE_B_m, s6_P00_z, s6_H, s6_R)
+			# s6_P00_z, s6_z_update = ekf6.Update(acc[0], acc[1], acc[2], mag[0], mag[1], mag[2], QE_B_m, s6_P00_z, s6_H, s6_R)
+			s6_P00_z, s6_z_update = ekf6.Update_v2(pose[0], pose[1], pose[2], QE_B_m, s6_P00_z, s6_H, s6_R)
 			# measurement
 			dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm = ekf6.Measurement(dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, s6_z_update, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm)
 			# calculate euler angle

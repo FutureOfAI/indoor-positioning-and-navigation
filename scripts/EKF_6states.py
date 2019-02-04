@@ -81,6 +81,25 @@ class EKF_6states(object):
 
         return s6_P00_z, s6_z_update
 
+    def Update_v2(self, roll, pitch, yaw, QE_B_m, s6_P00_z, s6_H, s6_R):
+
+        Q_E_B_e = self.euler2quatern(roll, pitch, yaw)
+        Q_B_E_m = Quaternion(QE_B_m[0], -QE_B_m[1], -QE_B_m[2], -QE_B_m[3])
+        dQ = Q_E_B_e.normalised * Q_B_E_m.normalised
+        # print (dQ[0],dQ[1],dQ[2],dQ[3])
+        d_theta = self.quatern2euler(dQ.normalised)
+        # Form the measurement residuals or mu
+        s6_Mu_z = d_theta
+        # print (s6_Mu_z)
+        # Computer the Kalman filter gain matrix K
+        s6_K_z = s6_P00_z.dot(s6_H.T).dot( LA.inv(s6_H.dot(s6_P00_z).dot(s6_H.T) + s6_R) )
+        # Computer the correction vectors
+        s6_z_update = s6_K_z.dot(s6_Mu_z.T)
+        # Perform the Kalman filter error covariance matrix P updates
+        s6_P00_z = (np.identity(6) - s6_K_z.dot(s6_H)).dot(s6_P00_z)
+
+        return s6_P00_z, s6_z_update
+
     def Measurement(self, dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, s6_z_update, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm):
 
         dtheda_xh = s6_z_update[0]

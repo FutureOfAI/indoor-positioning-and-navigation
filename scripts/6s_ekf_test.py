@@ -90,11 +90,17 @@ accz_test = np.array([-9.8,-9.8,-9.8,-9.8])
 magx_test = np.array([2.877312458709545,2.868357795017813,2.863880397500370,2.859402956878387])
 magy_test = np.array([35.997397931215560,35.999386810200676,36.000380469412846,36.001373608317150])
 magz_test = np.array([-27.659836572125170,-27.658178118764624,-27.657348736390680,27.656519250342413])
+
+phi_test = np.array([0,5.483113195386351e-05,8.224669116627548e-05,1.096622422612645e-04])
+theta_test = np.array([0,1.096622639077270e-04,1.644933823325510e-04,2.193244845225290e-04])
+psi_test = np.array([0,1.644933958615905e-04,2.467400734988265e-04,3.289867267837934e-04])
+
 # IMU initial params
 acc = np.zeros(3)
 grop = np.zeros(3)
 gro = np.zeros(3)
 mag = np.zeros(3)
+pos = np.zeros(3)
 
 # gyro err and bias
 gyro_err_flag = 0
@@ -398,13 +404,17 @@ class EKF_Cal_Euler(threading.Thread):
 			mag[0] = magx_test[i]
 			mag[1] = magy_test[i]
 			mag[2] = magz_test[i]
+			pos[0] = phi_test[i]
+			pos[1] = theta_test[i]
+			pos[2] = psi_test[i]
 
 			# predict
 			s6_P00_z, QE_B_m = ekf6.Predict(w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, gro[0], gro[1], gro[2], bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z)
 			# print (s6_P00_z)
 			# print (QE_B_m[0],QE_B_m[1],QE_B_m[2],QE_B_m[3])
 			# update
-			s6_P00_z, s6_z_update = ekf6.Update(acc[0], acc[1], acc[2], mag[0], mag[1], mag[2], QE_B_m, s6_P00_z, s6_H, s6_R)
+			# s6_P00_z, s6_z_update = ekf6.Update(acc[0], acc[1], acc[2], mag[0], mag[1], mag[2], QE_B_m, s6_P00_z, s6_H, s6_R)
+			s6_P00_z, s6_z_update = ekf6.Update_v2(pos[0], pos[1], pos[2], QE_B_m, s6_P00_z, s6_H, s6_R)
 			# print (s6_P00_z, s6_z_update)
 			# measurement
 			dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm = ekf6.Measurement(dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, s6_z_update, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm)
