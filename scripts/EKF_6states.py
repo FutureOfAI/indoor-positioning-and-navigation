@@ -120,12 +120,12 @@ class EKF_6states(object):
     # get direction cosine matrix from gyroscopemeter
     def DCM_calculate(self, wxp, wyp, wzp, wx, wy, wz, bgx_h, bgy_h, bgz_h, QE_B_m):
 
-        # wx = (1+0.254)*wx
-        # wxp = (1+0.254)*wxp
-        # wy = (1+0.246)*wy
-        # wyp = (1+0.246)*wyp
-        # wz = (1+0.24)*wz
-        # wzp = (1+0.24)*wzp
+        wx = (1+0.254)*wx
+        wxp = (1+0.254)*wxp
+        wy = (1+0.246)*wy
+        wyp = (1+0.246)*wyp
+        wz = (1+0.24)*wz
+        wzp = (1+0.24)*wzp
 
         wx = wx - bgx_h
         wy = wy - bgy_h
