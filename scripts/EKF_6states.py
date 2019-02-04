@@ -81,9 +81,16 @@ class EKF_6states(object):
 
         return s6_P00_z, s6_z_update
 
-    def Update_v2(self, roll, pitch, yaw, QE_B_m, s6_P00_z, s6_H, s6_R):
-        
+    def Update_v2(self, ax, ay, az, mx, my, mz, roll, pitch, yaw, QE_B_m, s6_P00_z, s6_H, s6_R):
+        ax = ax*9.8
+        ay = ay*9.8
+        az = -az*9.8
+        C_E_B_e = self.TRIAD(ax, ay, az, mx, my, mz)
+        tmp = self.rotMat2euler(C_E_B_e.T)
+        Q_E_B_e = self.euler2quatern(-tmp[1], tmp[0], tmp[2])
+        print Q_E_B_e
         Q_E_B_e = self.euler2quatern(roll, pitch, yaw)
+        print Q_E_B_e
         Q_B_E_m = Quaternion(QE_B_m[0], -QE_B_m[1], -QE_B_m[2], -QE_B_m[3])
         # print (Q_E_B_e[0],Q_E_B_e[1],Q_E_B_e[2],Q_E_B_e[3])
         dQ = Q_E_B_e.normalised * Q_B_E_m.normalised
