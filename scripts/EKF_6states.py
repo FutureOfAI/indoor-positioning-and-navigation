@@ -83,8 +83,10 @@ class EKF_6states(object):
 
     def Update_v2(self, roll, pitch, yaw, QE_B_m, s6_P00_z, s6_H, s6_R):
 
-        Q_E_B_e = self.euler2quatern(roll*self._d2r, pitch*self._d2r, yaw*self._d2r)
+        # Q_E_B_e = self.euler2quatern(roll*self._d2r, pitch*self._d2r, yaw*self._d2r)
+        Q_E_B_e = self.euler2quatern(roll, pitch, yaw)
         Q_B_E_m = Quaternion(QE_B_m[0], -QE_B_m[1], -QE_B_m[2], -QE_B_m[3])
+        # print (Q_E_B_e[0],Q_E_B_e[1],Q_E_B_e[2],Q_E_B_e[3])
         dQ = Q_E_B_e.normalised * Q_B_E_m.normalised
         # print (dQ[0],dQ[1],dQ[2],dQ[3])
         d_theta = self.quatern2euler(dQ.normalised)
@@ -119,12 +121,12 @@ class EKF_6states(object):
     # get direction cosine matrix from gyroscopemeter
     def DCM_calculate(self, wxp, wyp, wzp, wx, wy, wz, bgx_h, bgy_h, bgz_h, QE_B_m):
 
-        wx = (1+0.254)*wx
-        wxp = (1+0.254)*wxp
-        wy = (1+0.246)*wy
-        wyp = (1+0.246)*wyp
-        wz = (1+0.24)*wz
-        wzp = (1+0.24)*wzp
+        # wx = (1+0.254)*wx
+        # wxp = (1+0.254)*wxp
+        # wy = (1+0.246)*wy
+        # wyp = (1+0.246)*wyp
+        # wz = (1+0.24)*wz
+        # wzp = (1+0.24)*wzp
 
         wx = wx - bgx_h
         wy = wy - bgy_h
@@ -284,10 +286,10 @@ class EKF_6states(object):
         cr = np.cos(roll/2)
         sr = np.sin(roll/2)
 
-        q1 = -cy * cp * cr - sy * sp * sr
+        q1 = cy * cp * cr + sy * sp * sr
         q2 = cy * cp * sr - sy * sp * cr
         q3 = sy * cp * sr + cy * sp * cr
         q4 = sy * cp * cr - cy * sp * sr
 
-        Q = Quaternion(q1, q2, q3, q4)
+        Q = Quaternion(q1, -q2, -q3, -q4)
         return Q
