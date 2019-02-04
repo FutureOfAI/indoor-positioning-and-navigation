@@ -26,9 +26,11 @@ import psutil
 # initial database matrix
 IMU_Database = np.zeros([4000,12])
 UWB_Database = np.zeros([400,6])
+Euler_Database = np.zeros([10,3])
 UWB_Databuf = np.zeros(6)
 IMU_Database_cnt = 0
 UWB_Database_cnt = 0
+Euler_Database_cnt = 0
 IMU_Database_flag = 0
 UWB_Database_flag = 0
 
@@ -382,7 +384,7 @@ class EKF_Cal_Euler(threading.Thread):
 		threading.Thread.__init__(self, name = t_name)
 		self.data = queue
 	def run(self):
-		global w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, bgx_h, bgy_h, bgz_h, QE_B_m, s6_P00_z, dtheda_xh, dtheda_yh, dtheda_zh
+		global w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, bgx_h, bgy_h, bgz_h, QE_B_m, s6_P00_z, dtheda_xh, dtheda_yh, dtheda_zh, Euler_Database, Euler_Database_cnt
 		while True:
 			EKF_start_time = time.time()
 			# predict
@@ -406,7 +408,12 @@ class EKF_Cal_Euler(threading.Thread):
 			EKF_end_time = time.time()
 			dt = EKF_start_time-EKF_end_time
 			# print w_EB_B_xm,w_EB_B_ym,w_EB_B_zm
-			print (Angle*r2d)
+			# print (Angle*r2d)
+			Euler_Database[Euler_Database_cnt,:] = Angle
+			Euler_Database_cnt = Euler_Database_cnt+1
+			if Euler_Database_cnt==10:
+				print (np.mean(Euler_Database))
+				Euler_Database_cnt = 0
 			# print (psutil.cpu_percent())
 			time.sleep(0.01)
 
