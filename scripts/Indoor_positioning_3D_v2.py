@@ -389,7 +389,7 @@ class EKF_Cal_Euler(threading.Thread):
 			s6_P00_z, QE_B_m = ekf6.Predict(w_EB_B_xm, w_EB_B_ym, w_EB_B_zm, gro[0], gro[1], gro[2], bgx_h, bgy_h, bgz_h, QE_B_m, s6_xz_h, s6_P00_z, s6_Q_z)
 			# update
 			# s6_P00_z, s6_z_update = ekf6.Update(acc[0], acc[1], acc[2], mag[0], mag[1], mag[2], QE_B_m, s6_P00_z, s6_H, s6_R)
-			s6_P00_z, s6_z_update = ekf6.Update_v2(acc[0], acc[1], acc[2], mag[0], mag[1], mag[2], pose[0], pose[1], pose[2], QE_B_m, s6_P00_z, s6_H, s6_R)
+			s6_P00_z, s6_z_update = ekf6.Update_v2(acc[0], acc[1], acc[2], mag[0], mag[1], mag[2], pose[0], -pose[1], -pose[2], QE_B_m, s6_P00_z, s6_H, s6_R)
 			# measurement
 			dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm = ekf6.Measurement(dtheda_xh, dtheda_yh, dtheda_zh, bgx_h, bgy_h, bgz_h, s6_z_update, w_EB_B_xm, w_EB_B_ym, w_EB_B_zm)
 			# calculate euler angle
