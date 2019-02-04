@@ -88,9 +88,9 @@ class EKF_6states(object):
         C_E_B_e = self.TRIAD(ax, ay, az, mx, my, mz)
         tmp = self.rotMat2euler(C_E_B_e.T)
         Q_E_B_e = self.euler2quatern(-tmp[1], tmp[0], tmp[2])
-        print Q_E_B_e
+        print (Q_E_B_e[0],Q_E_B_e[1],Q_E_B_e[2],Q_E_B_e[3])
         Q_E_B_e = self.euler2quatern(roll, pitch, yaw)
-        print Q_E_B_e
+        print (Q_E_B_e[0],Q_E_B_e[1],Q_E_B_e[2],Q_E_B_e[3])
         Q_B_E_m = Quaternion(QE_B_m[0], -QE_B_m[1], -QE_B_m[2], -QE_B_m[3])
         # print (Q_E_B_e[0],Q_E_B_e[1],Q_E_B_e[2],Q_E_B_e[3])
         dQ = Q_E_B_e.normalised * Q_B_E_m.normalised
