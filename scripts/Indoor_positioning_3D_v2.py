@@ -350,7 +350,7 @@ class Get_IMU_Data(threading.Thread):
 		threading.Thread.__init__(self, name = t_name)
 		self.data = queue
 	def run(self):
-		global acc, gro, mag, pos, IMU_Database_cnt
+		global acc, gro, mag, pose, IMU_Database_cnt
 		while True:
 			if imu.IMURead():
 				imu_data = imu.getIMUData()
