@@ -414,17 +414,18 @@ class EKF_Cal_Euler(threading.Thread):
 			# q3 = -dtheda_yh/2
 			# q4 = -dtheda_zh/2
 			# q1 = np.sqrt(1-np.square(q2)-np.square(q3)-np.square(q4)) @@
-			DCM_err = ekf6.euler2rotMat(dtheda_xh, dtheda_yh, dtheda_zh)
+			# DCM_err = ekf6.euler2rotMat(dtheda_xh, dtheda_yh, dtheda_zh)
 			# print (DCM_err)
 			# dQ2 = Quaternion(q1, q2, q3, q4)
-			dQ2 = ekf6.rotMat2quatern(DCM_err)
+			# dQ2 = ekf6.rotMat2quatern(DCM_err)
+			dQ2 = ekf6.euler2quatern(dtheda_xh, dtheda_yh, dtheda_zh)
 			# print (dQ2[0],dQ2[1],dQ2[2],dQ2[3])
 			QE_B_m = QE_B_m.normalised * dQ2.normalised
 			# print (QE_B_m[0],QE_B_m[1],QE_B_m[2],QE_B_m[3])
 			Angle = ekf6.quatern2euler(QE_B_m)
 			EKF_end_time = time.time()
 			dt = EKF_start_time-EKF_end_time
-			# print (Angle)
+			print (Angle)
 			# print (psutil.cpu_percent())
 			time.sleep(0.01)
 

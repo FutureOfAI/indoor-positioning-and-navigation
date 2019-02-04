@@ -58,11 +58,12 @@ class EKF_6states(object):
         C_E_B_e = self.TRIAD(ax, ay, az, mx, my, mz)
         # print (C_E_B_e)
         tmp = self.rotMat2euler(C_E_B_e.T)
-        C_E_B_e = self.euler2rotMat(-tmp[1], tmp[0], tmp[2])
+        # C_E_B_e = self.euler2rotMat(-tmp[1], tmp[0], tmp[2])
         # print (tmp)
         # tmp = self.AccMag2euler(ax, ay, az, mx, my)
         # C_E_B_e = self.euler2rotMat(tmp[0],tmp[1],tmp[2])
-        Q_E_B_e = self.rotMat2quatern(C_E_B_e)
+        # Q_E_B_e = self.rotMat2quatern(C_E_B_e)
+        Q_E_B_e = self.euler2quatern(-tmp[1], tmp[0], tmp[2])
         # print (Q_E_B_e[0],Q_E_B_e[1],Q_E_B_e[2],Q_E_B_e[3]) @@
         Q_B_E_m = Quaternion(QE_B_m[0], -QE_B_m[1], -QE_B_m[2], -QE_B_m[3])
         dQ = Q_E_B_e.normalised * Q_B_E_m.normalised
@@ -175,8 +176,6 @@ class EKF_6states(object):
         vals,vecs = LA.eigh(K)
         # print (vecs) @@
         q = Quaternion([vecs[3,3], vecs[0,3], vecs[1,3], vecs[2,3]])
-        if vecs[3,3]<0:
-            q = -q
         return q
 
     def rotMat2euler(self, R):
@@ -217,9 +216,9 @@ class EKF_6states(object):
         # [mx,my,mz] = Rot_mag.dot(np.array([mx,my,mz]))
 
         a_B = np.array([ax, ay, az])
-        print (a_B[0],a_B[1],a_B[2])
+        # print (a_B[0],a_B[1],a_B[2])
         q_B = self.normalize(a_B)
-        print (q_B[0],q_B[1],q_B[2])
+        # print (q_B[0],q_B[1],q_B[2])
         m_B = np.array([mx, my, mz])
         m_B_u = self.normalize(m_B)
         # print (m_B_u[0],m_B_u[1],m_B_u[2])
@@ -257,3 +256,19 @@ class EKF_6states(object):
         if norm_v == 0:
             return v
         return v/norm_v
+
+    def euler2quatern(self,roll,pitch,yaw):
+        cy = np.cos(yaw/2)
+        sy = np.sin(yaw/2)
+        cp = np.cos(pitch/2)
+        sp = np.sin(pitch/2)
+        cr = np.cos(roll/2)
+        sr = np.sin(roll/2)
+
+        q1 = -cy * cp * cr - sy * sp * sr
+        q2 = cy * cp * sr - sy * sp * cr
+        q3 = sy * cp * sr + cy * sp * cr
+        q4 = sy * cp * cr - cy * sp * sr
+
+        Q = Quaternion(q1, q2, q3, q4)
+        return Q

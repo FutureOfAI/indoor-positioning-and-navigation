@@ -394,9 +394,10 @@ class EKF_Cal_Euler(threading.Thread):
 			# q3 = -dtheda_yh/2
 			# q4 = -dtheda_zh/2
 			# q1 = np.sqrt(1-np.square(q2)-np.square(q3)-np.square(q4))
-			DCM_err = ekf6.euler2rotMat(dtheda_xh, dtheda_yh, dtheda_zh)
+			# DCM_err = ekf6.euler2rotMat(dtheda_xh, dtheda_yh, dtheda_zh)
 			# dQ2 = Quaternion(q1, q2, q3, q4)
-			dQ2 = ekf6.rotMat2quatern(DCM_err)
+			# dQ2 = ekf6.rotMat2quatern(DCM_err)
+			dQ2 = ekf6.euler2quatern(dtheda_xh, dtheda_yh, dtheda_zh)
 			QE_B_m = dQ2.normalised * QE_B_m.normalised
 			Angle = ekf6.quatern2euler(QE_B_m)
 			EKF_end_time = time.time()
