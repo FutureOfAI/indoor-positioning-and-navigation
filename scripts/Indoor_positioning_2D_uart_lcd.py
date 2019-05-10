@@ -39,7 +39,7 @@ try:
         size = ser.inWaiting()
         if size != 0:
             response = ser.read(size)
-            print binascii.hexlify(reponse)
+            # print binascii.hexlify(reponse)
             A10=int(binascii.hexlify(response[13]),16)*256+int(binascii.hexlify(response[14]),16)
             A11=int(binascii.hexlify(response[15]),16)*256+int(binascii.hexlify(response[16]),16)
             A12=int(binascii.hexlify(response[17]),16)*256+int(binascii.hexlify(response[18]),16)
