@@ -32,6 +32,8 @@ x = 0
 y = 0
 sum = 0
 
+lcd.message("test!")
+
 try:
     while True:
         # ser.write("DistanceOutON"+"\r"+"\n")
