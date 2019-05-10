@@ -32,7 +32,7 @@ x = 0
 y = 0
 sum = 0
 
-lcd.message("test!")
+# lcd.message("test!")
 
 try:
     while True:
@@ -48,8 +48,9 @@ try:
             x = float(x)/1024*100
             y = float(y)/1024*100
             # print x, y
-            # lcd.message("x:" + str(round(x,1)) + "cm; x:" + str(round(y,1)) + "cm")
-            lcd.message("test!")
+            lcd.clear()
+            lcd.message("x:" + str(round(x,1)) + "cm; x:" + str(round(y,1)) + "cm")
+            # lcd.message("test!")
             # A10 = int(binascii.hexlify(response[13]),16)*256+int(binascii.hexlify(response[14]),16)
             # A11 = int(binascii.hexlify(response[15]),16)*256+int(binascii.hexlify(response[16]),16)
             # A12 = int(binascii.hexlify(response[17]),16)*256+int(binascii.hexlify(response[18]),16)
