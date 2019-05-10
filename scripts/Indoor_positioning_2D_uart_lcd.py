@@ -34,22 +34,22 @@ sum=0
 
 try:
     while True:
-        ser.write("DistanceOutON"+"\r"+"\n")
-
+        # ser.write("DistanceOutON"+"\r"+"\n")
+        ser.write("PostionOutON"+"\r"+"\n")
         size = ser.inWaiting()
         if size != 0:
             response = ser.read(size)
-            # print binascii.hexlify(response)
-            A10=int(binascii.hexlify(response[13]),16)*256+int(binascii.hexlify(response[14]),16)
-            A11=int(binascii.hexlify(response[15]),16)*256+int(binascii.hexlify(response[16]),16)
-            A12=int(binascii.hexlify(response[17]),16)*256+int(binascii.hexlify(response[18]),16)
-            A13=int(binascii.hexlify(response[19]),16)*256+int(binascii.hexlify(response[20]),16)
+            print binascii.hexlify(response)
+            # A10=int(binascii.hexlify(response[13]),16)*256+int(binascii.hexlify(response[14]),16)
+            # A11=int(binascii.hexlify(response[15]),16)*256+int(binascii.hexlify(response[16]),16)
+            # A12=int(binascii.hexlify(response[17]),16)*256+int(binascii.hexlify(response[18]),16)
+            # A13=int(binascii.hexlify(response[19]),16)*256+int(binascii.hexlify(response[20]),16)
 
-            A10=float(A10)/1024*100
-            A11=float(A11)/1024*100
-            A12=float(A12)/1024*100
-            A13=float(A13)/1024*100
-            print A10, A11, A12, A13
+            # A10=float(A10)/1024*100
+            # A11=float(A11)/1024*100
+            # A12=float(A12)/1024*100
+            # A13=float(A13)/1024*100
+            # print A10, A11, A12, A13
 
             # distance[n]=A10
             # sum=sum+distance[n]
