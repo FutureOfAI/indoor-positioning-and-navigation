@@ -19,8 +19,6 @@ lcd_rows    = 2
 lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7,
                            lcd_columns, lcd_rows)
 
-x_distance=[0]*10000
-y_distance=[0]*10000
 ser = serial.Serial("/dev/ttyAMA0", 57600,bytesize = 8,parity = 'N',stopbits = 1)
 if ser.isOpen == False:
     ser.open()
@@ -63,16 +61,14 @@ try:
             # A13 = float(A13)/1024*100
             # print A10, A11, A12, A13
 
-            x_distance[n] = x
-            y_distance[n] = y
-            sum_x = sum_x + x_distance[n]
-            sum_y = sum_y + y_distance[n]
+            sum_x = sum_x + x
+            sum_y = sum_y + y
             if n==39:
                 # print sum/40
                 lcd.clear()
-                lcd.message("x:" + str(round(sum_x/40,2)) + "m; x:" + str(round(sum_y/40,2)) + "m")
-                x_sum = 0
-                y_sum = 0
+                lcd.message("x:" + str(round(sum_x/40,2)) + "m; y:" + str(round(sum_y/40,2)) + "m")
+                sum_x = 0
+                sum_y = 0
                 n = 0
             ser.flushInput()
             n = n + 1
