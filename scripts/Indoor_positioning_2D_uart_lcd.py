@@ -19,7 +19,8 @@ lcd_rows    = 2
 lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7,
                            lcd_columns, lcd_rows)
 
-distance=[0]*10000
+x_distance=[0]*10000
+y_distance=[0]*10000
 ser = serial.Serial("/dev/ttyAMA0", 57600,bytesize = 8,parity = 'N',stopbits = 1)
 if ser.isOpen == False:
     ser.open()
@@ -30,7 +31,8 @@ A12 = 0
 A13 = 0
 x = 0
 y = 0
-sum = 0
+sum_x = 0
+sum_y = 0
 
 # lcd.message("test!")
 
@@ -42,14 +44,13 @@ try:
         if size != 0:
             response = ser.read(size)
             # print binascii.hexlify(response)
-            x = int(binascii.hexlify(response[1]),16)*256+int(binascii.hexlify(response[2]),16)
-            y = int(binascii.hexlify(response[3]),16)*256+int(binascii.hexlify(response[4]),16)
+            y = int(binascii.hexlify(response[1]),16)*256+int(binascii.hexlify(response[2]),16)
+            x = int(binascii.hexlify(response[3]),16)*256+int(binascii.hexlify(response[4]),16)
 
             x = float(x)/1024
             y = float(y)/1024
             # print x, y
-            lcd.clear()
-            lcd.message("x:" + str(round(x,2)) + "m; x:" + str(round(y,2)) + "m")
+
             # lcd.message("test!")
             # A10 = int(binascii.hexlify(response[13]),16)*256+int(binascii.hexlify(response[14]),16)
             # A11 = int(binascii.hexlify(response[15]),16)*256+int(binascii.hexlify(response[16]),16)
@@ -62,15 +63,20 @@ try:
             # A13 = float(A13)/1024*100
             # print A10, A11, A12, A13
 
-            # distance[n]=A10
-            # sum=sum+distance[n]
-            # if n==39:
-            #     # print sum/40
-            #     sum=0
-            #     n=0
-            # ser.flushInput()
-            # n=n+1
-        time.sleep(0.1)
+            x_distance[n] = x
+            y_distance[n] = y
+            sum_x = sum_x + x_distance[n]
+            sum_y = sum_y + y_distance[n]
+            if n==39:
+                # print sum/40
+                lcd.clear()
+                lcd.message("x:" + str(round(sum_x/40,2)) + "m; x:" + str(round(sum_y/40,2)) + "m")
+                x_sum = 0
+                y_sum = 0
+                n = 0
+            ser.flushInput()
+            n = n + 1
+        time.sleep(0.01)
 
 except KeyboardInterrupt:
     ser.close()
