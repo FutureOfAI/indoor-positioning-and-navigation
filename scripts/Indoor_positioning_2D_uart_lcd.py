@@ -45,11 +45,11 @@ try:
             x = int(binascii.hexlify(response[1]),16)*256+int(binascii.hexlify(response[2]),16)
             y = int(binascii.hexlify(response[3]),16)*256+int(binascii.hexlify(response[4]),16)
 
-            x = float(x)/1024*100
-            y = float(y)/1024*100
+            x = float(x)/1024
+            y = float(y)/1024
             # print x, y
             lcd.clear()
-            lcd.message("x:" + str(round(x,1)) + "cm; x:" + str(round(y,1)) + "cm")
+            lcd.message("x:" + str(round(x,2)) + "m; x:" + str(round(y,2)) + "m")
             # lcd.message("test!")
             # A10 = int(binascii.hexlify(response[13]),16)*256+int(binascii.hexlify(response[14]),16)
             # A11 = int(binascii.hexlify(response[15]),16)*256+int(binascii.hexlify(response[16]),16)
