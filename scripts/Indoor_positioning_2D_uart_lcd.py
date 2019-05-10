@@ -19,8 +19,6 @@ lcd_rows    = 2
 lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7,
                            lcd_columns, lcd_rows)
 
-# lcd.message("test!")
-
 distance=[0]*10000
 ser = serial.Serial("/dev/ttyAMA0", 57600,bytesize = 8,parity = 'N',stopbits = 1)
 if ser.isOpen == False:
@@ -47,8 +45,8 @@ try:
 
             x = float(x)/1024*100
             y = float(y)/1024*100
-            print x, y
-
+            # print x, y
+            lcd.message("x:" + str(round(x,1)) + "cm; x:" + str(round(y,1)) + "cm")
             # A10 = int(binascii.hexlify(response[13]),16)*256+int(binascii.hexlify(response[14]),16)
             # A11 = int(binascii.hexlify(response[15]),16)*256+int(binascii.hexlify(response[16]),16)
             # A12 = int(binascii.hexlify(response[17]),16)*256+int(binascii.hexlify(response[18]),16)
