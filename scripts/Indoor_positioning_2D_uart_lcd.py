@@ -33,14 +33,32 @@ A13=0
 sum=0
 
 try:
-	while True:
-		ser.write("DistanceOutON"+"\r"+"\n")
+    while True:
+        ser.write("DistanceOutON"+"\r"+"\n")
 
-		size = ser.inWaiting()
-		if size != 0:
-			reponse = ser.read(size)
-			print binascii.hexlify(reponse)
-		time.sleep(0.1)
+        size = ser.inWaiting()
+        if size != 0:
+            reponse = ser.read(size)
+            # print binascii.hexlify(reponse)
+            A10=int(binascii.hexlify(response[1]),16)*256+int(binascii.hexlify(response[2]),16)
+            A11=int(binascii.hexlify(response[3]),16)*256+int(binascii.hexlify(response[4]),16)
+            A12=int(binascii.hexlify(response[5]),16)*256+int(binascii.hexlify(response[6]),16)
+            A13=int(binascii.hexlify(response[7]),16)*256+int(binascii.hexlify(response[8]),16)
+
+            A10=float(A10)/1024*100
+            A11=float(A11)/1024*100
+            A12=float(A12)/1024*100
+            A13=float(A13)/1024*100
+
+            distance[n]=A10
+            sum=sum+distance[n]
+            if n==39:
+                print sum/40
+                sum=0
+                n=0
+            ser.flushInput()
+            n=n+1
+        time.sleep(0.1)
 
 except KeyboardInterrupt:
-	ser.close()
+    ser.close()
