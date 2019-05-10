@@ -66,7 +66,7 @@ try:
             #     n=0
             # ser.flushInput()
             # n=n+1
-        time.sleep(0.05)
+        time.sleep(0.1)
 
 except KeyboardInterrupt:
     ser.close()
