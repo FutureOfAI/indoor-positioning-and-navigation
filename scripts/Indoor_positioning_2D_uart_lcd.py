@@ -34,8 +34,8 @@ sum=0
 
 try:
     while True:
-        ser.write("DistanceOutON"+"\r"+"\n")
-        # ser.write("PostionOutON"+"\r"+"\n")
+        # ser.write("DistanceOutON"+"\r"+"\n")
+        ser.write("PostionOutON"+"\r"+"\n")
         size = ser.inWaiting()
         if size != 0:
             response = ser.read(size)
