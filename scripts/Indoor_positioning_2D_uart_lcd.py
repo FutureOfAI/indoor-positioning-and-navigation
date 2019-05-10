@@ -25,12 +25,14 @@ distance=[0]*10000
 ser = serial.Serial("/dev/ttyAMA0", 57600,bytesize = 8,parity = 'N',stopbits = 1)
 if ser.isOpen == False:
     ser.open()
-n=0
-A10=0
-A11=0
-A12=0
-A13=0
-sum=0
+n = 0
+A10 = 0
+A11 = 0
+A12 = 0
+A13 = 0
+x = 0
+y = 0
+sum = 0
 
 try:
     while True:
@@ -39,16 +41,23 @@ try:
         size = ser.inWaiting()
         if size != 0:
             response = ser.read(size)
-            print binascii.hexlify(response)
-            # A10=int(binascii.hexlify(response[13]),16)*256+int(binascii.hexlify(response[14]),16)
-            # A11=int(binascii.hexlify(response[15]),16)*256+int(binascii.hexlify(response[16]),16)
-            # A12=int(binascii.hexlify(response[17]),16)*256+int(binascii.hexlify(response[18]),16)
-            # A13=int(binascii.hexlify(response[19]),16)*256+int(binascii.hexlify(response[20]),16)
+            # print binascii.hexlify(response)
+            x = int(binascii.hexlify(response[1]),16)*256+int(binascii.hexlify(response[2]),16)
+            y = int(binascii.hexlify(response[3]),16)*256+int(binascii.hexlify(response[4]),16)
 
-            # A10=float(A10)/1024*100
-            # A11=float(A11)/1024*100
-            # A12=float(A12)/1024*100
-            # A13=float(A13)/1024*100
+            x = float(x)/1024*100
+            y = float(y)/1024*100
+            print x, y
+
+            # A10 = int(binascii.hexlify(response[13]),16)*256+int(binascii.hexlify(response[14]),16)
+            # A11 = int(binascii.hexlify(response[15]),16)*256+int(binascii.hexlify(response[16]),16)
+            # A12 = int(binascii.hexlify(response[17]),16)*256+int(binascii.hexlify(response[18]),16)
+            # A13 = int(binascii.hexlify(response[19]),16)*256+int(binascii.hexlify(response[20]),16)
+
+            # A10 = float(A10)/1024*100
+            # A11 = float(A11)/1024*100
+            # A12 = float(A12)/1024*100
+            # A13 = float(A13)/1024*100
             # print A10, A11, A12, A13
 
             # distance[n]=A10
