@@ -39,11 +39,11 @@ try:
         size = ser.inWaiting()
         if size != 0:
             response = ser.read(size)
-            # print binascii.hexlify(reponse)
-            A10=int(binascii.hexlify(response[1]),16)*256+int(binascii.hexlify(response[2]),16)
-            A11=int(binascii.hexlify(response[3]),16)*256+int(binascii.hexlify(response[4]),16)
-            A12=int(binascii.hexlify(response[5]),16)*256+int(binascii.hexlify(response[6]),16)
-            A13=int(binascii.hexlify(response[7]),16)*256+int(binascii.hexlify(response[8]),16)
+            print binascii.hexlify(reponse)
+            A10=int(binascii.hexlify(response[13]),16)*256+int(binascii.hexlify(response[14]),16)
+            A11=int(binascii.hexlify(response[15]),16)*256+int(binascii.hexlify(response[16]),16)
+            A12=int(binascii.hexlify(response[17]),16)*256+int(binascii.hexlify(response[18]),16)
+            A13=int(binascii.hexlify(response[19]),16)*256+int(binascii.hexlify(response[20]),16)
 
             A10=float(A10)/1024*100
             A11=float(A11)/1024*100
@@ -58,7 +58,7 @@ try:
                 n=0
             ser.flushInput()
             n=n+1
-        time.sleep(0.1)
+        time.sleep(0.05)
 
 except KeyboardInterrupt:
     ser.close()
