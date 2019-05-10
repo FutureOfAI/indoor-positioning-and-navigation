@@ -39,7 +39,7 @@ try:
         size = ser.inWaiting()
         if size != 0:
             response = ser.read(size)
-            # print binascii.hexlify(reponse)
+            print binascii.hexlify(reponse)
             A10=int(binascii.hexlify(response[13]),16)*256+int(binascii.hexlify(response[14]),16)
             A11=int(binascii.hexlify(response[15]),16)*256+int(binascii.hexlify(response[16]),16)
             A12=int(binascii.hexlify(response[17]),16)*256+int(binascii.hexlify(response[18]),16)
@@ -49,7 +49,7 @@ try:
             A11=float(A11)/1024*100
             A12=float(A12)/1024*100
             A13=float(A13)/1024*100
-            print A10, A11, A12, A13
+            # print A10, A11, A12, A13
 
             distance[n]=A10
             sum=sum+distance[n]
