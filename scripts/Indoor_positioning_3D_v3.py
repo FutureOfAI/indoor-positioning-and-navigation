@@ -235,20 +235,16 @@ class EKF_Cal_Euler(threading.Thread):
 			Euler_Database[Euler_Database_cnt,:] = Angle
 			Euler_Database_cnt = Euler_Database_cnt+1
 
-			lcd.clear()
-			lcd.message("roll:" + str(round(Angle[0],1)) + " ")
-			lcd.message("pitch:" + str(round(Angle[1],1)) + " ")
-			lcd.message("yaw:" + str(round(Angle[2],1)) + " ")
-
 			if Euler_Database_cnt==10:
 				# print (np.mean(Euler_Database,axis=0)*r2d)
-				# roll_mean = np.mean(Euler_Database[:,0]*r2d)
-				# pitch_mean = np.mean(Euler_Database[:,1]*r2d)
-				# yaw_mean = np.mean(Euler_Database[:,2]*r2d)
-				# lcd.clear()
-				# lcd.message("roll:"+str(round(roll_mean,1)))
-				# lcd.message("pitch:"+str(round(pitch_mean,1)))
-				# lcd.message("yaw:"+str(round(yaw_mean,1)))
+				roll_mean = np.mean(Euler_Database[:,0]*r2d)
+				pitch_mean = np.mean(Euler_Database[:,1]*r2d)
+				yaw_mean = np.mean(Euler_Database[:,2]*r2d)
+				lcd.clear()
+				lcd.message("roll:"+str(round(roll_mean,1)))
+				lcd.message("pitch:"+str(round(pitch_mean,1)))
+				lcd.message("yaw:"+str(round(yaw_mean,1)))
+				# clear counter
 				Euler_Database_cnt = 0
 			# print (psutil.cpu_percent())
 			time.sleep(0.01)
