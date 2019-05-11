@@ -237,8 +237,12 @@ class EKF_Cal_Euler(threading.Thread):
 			if Euler_Database_cnt==10:
 				# print (np.mean(Euler_Database,axis=0)*r2d)
 				roll_mean = np.mean(Euler_Database[:,0]*r2d)
+				pitch_mean = np.mean(Euler_Database[:,1]*r2d)
+				yaw_mean = np.mean(Euler_Database[:,2]*r2d)
 				lcd.clear()
 				lcd.message("roll:"+str(round(roll_mean,1)))
+				lcd.message("pitch:"+str(round(pitch_mean,1)))
+				lcd.message("yaw:"+str(round(yaw_mean,1)))
 				Euler_Database_cnt = 0
 			# print (psutil.cpu_percent())
 			time.sleep(0.01)
