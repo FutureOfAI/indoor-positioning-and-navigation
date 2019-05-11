@@ -242,9 +242,9 @@ class EKF_Cal_Euler(threading.Thread):
 				yaw_mean = np.mean(Euler_Database[:,2]*r2d)
 				lcd.clear()
 				lcd.message("roll:"+str(round(roll_mean,1)))
-				lcd.set_cursor(1,0)
+				lcd.set_cursor(0,1)
 				lcd.message("pitch:"+str(round(pitch_mean,1)))
-				lcd.set_cursor(2,0)
+				lcd.set_cursor(0,2)
 				lcd.message("yaw:"+str(round(yaw_mean,1)))
 				# clear counter
 				Euler_Database_cnt = 0
