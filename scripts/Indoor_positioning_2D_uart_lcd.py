@@ -32,47 +32,51 @@ y = 0
 sum_x = 0
 sum_y = 0
 
-# lcd.message("test!")
-
 try:
     while True:
-        # ser.write("DistanceOutON"+"\r"+"\n")
-        ser.write("PostionOutON"+"\r"+"\n")
+        ser.write("DistanceOutON"+"\r"+"\n")
         size = ser.inWaiting()
         if size != 0:
             response = ser.read(size)
-            # print binascii.hexlify(response)
-            y = int(binascii.hexlify(response[1]),16)*256+int(binascii.hexlify(response[2]),16)
-            x = int(binascii.hexlify(response[3]),16)*256+int(binascii.hexlify(response[4]),16)
+            A10 = int(binascii.hexlify(response[13]),16)*256+int(binascii.hexlify(response[14]),16)
+            A11 = int(binascii.hexlify(response[15]),16)*256+int(binascii.hexlify(response[16]),16)
+            A12 = int(binascii.hexlify(response[17]),16)*256+int(binascii.hexlify(response[18]),16)
+            A13 = int(binascii.hexlify(response[19]),16)*256+int(binascii.hexlify(response[20]),16)
 
-            x = float(x)/1024
-            y = float(y)/1024
-            # print x, y
-            lcd.clear()
-            lcd.message("x:" + str(round(x,2)) + "m; y:" + str(round(y,2)) + "m")
+            A10 = float(A10)/1024
+            A11 = float(A11)/1024
+            A12 = float(A12)/1024
+            A13 = float(A13)/1024
 
-            # A10 = int(binascii.hexlify(response[13]),16)*256+int(binascii.hexlify(response[14]),16)
-            # A11 = int(binascii.hexlify(response[15]),16)*256+int(binascii.hexlify(response[16]),16)
-            # A12 = int(binascii.hexlify(response[17]),16)*256+int(binascii.hexlify(response[18]),16)
-            # A13 = int(binascii.hexlify(response[19]),16)*256+int(binascii.hexlify(response[20]),16)
+            if A10<20 && A11<20 && A12<20 && A13<20:
+                ser.write("PostionOutON"+"\r"+"\n")
+                size = ser.inWaiting()
+                if size != 0:
+                    response = ser.read(size)
+                    # print binascii.hexlify(response)
+                    y = int(binascii.hexlify(response[1]),16)*256+int(binascii.hexlify(response[2]),16)
+                    x = int(binascii.hexlify(response[3]),16)*256+int(binascii.hexlify(response[4]),16)
 
-            # A10 = float(A10)/1024*100
-            # A11 = float(A11)/1024*100
-            # A12 = float(A12)/1024*100
-            # A13 = float(A13)/1024*100
-            # print A10, A11, A12, A13
+                    x = float(x)/1024
+                    y = float(y)/1024
+                    # print x, y
+                    lcd.clear()
+                    lcd.message("x:" + str(round(x,2)) + "m; y:" + str(round(y,2)) + "m")
 
-            sum_x = sum_x + x
-            sum_y = sum_y + y
-            if n==39:
-                # print sum/40
-                # lcd.clear()
-                # lcd.message("x:" + str(round(sum_x/40,2)) + "m; y:" + str(round(sum_y/40,2)) + "m")
-                sum_x = 0
-                sum_y = 0
-                n = 0
-            ser.flushInput()
-            n = n + 1
+                    sum_x = sum_x + x
+                    sum_y = sum_y + y
+                    if n==39:
+                        # print sum/40
+                        # lcd.clear()
+                        # lcd.message("x:" + str(round(sum_x/40,2)) + "m; y:" + str(round(sum_y/40,2)) + "m")
+                        sum_x = 0
+                        sum_y = 0
+                        n = 0
+                    ser.flushInput()
+                    n = n + 1
+            else:
+                lcd.clear()
+                lcd.message("Signal loss")
         time.sleep(0.1)
 
 except KeyboardInterrupt:
