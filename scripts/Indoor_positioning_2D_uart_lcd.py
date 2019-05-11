@@ -48,7 +48,7 @@ try:
             A12 = float(A12)/1024
             A13 = float(A13)/1024
 
-            if A10<20 && A11<20 && A12<20 && A13<20:
+            if A10<20 and A11<20 and A12<20 and A13<20:
                 ser.write("PostionOutON"+"\r"+"\n")
                 size = ser.inWaiting()
                 if size != 0:
