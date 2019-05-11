@@ -64,7 +64,7 @@ lcd_rows    = 4
 lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7,
                            lcd_columns, lcd_rows)
 
-lcd.message("test!")
+# lcd.message("test!")
 
 # Matlab algorithm test data 
 grox_test = np.array([0,0.002741556236919,0.002741555560467])
@@ -235,7 +235,9 @@ class EKF_Cal_Euler(threading.Thread):
 			Euler_Database[Euler_Database_cnt,:] = Angle
 			Euler_Database_cnt = Euler_Database_cnt+1
 			if Euler_Database_cnt==10:
-				print (np.mean(Euler_Database,axis=0)*r2d)
+				# print (np.mean(Euler_Database,axis=0)*r2d)
+				roll_mean = np.mean(Euler_Database[:,0])
+				lcd.message("roll:"+str(round(roll_mean,1)))
 				Euler_Database_cnt = 0
 			# print (psutil.cpu_percent())
 			time.sleep(0.01)
