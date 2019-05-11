@@ -32,7 +32,7 @@ x = 0
 y = 0
 sum_x = 0
 sum_y = 0
-response = np.zero(30)
+response = np.zeros(30)
 
 try:
     while True:
