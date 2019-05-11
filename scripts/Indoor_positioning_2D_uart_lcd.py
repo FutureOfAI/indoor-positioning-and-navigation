@@ -40,15 +40,16 @@ try:
         size = ser.inWaiting()
         if size != 0:
             response = ser.read(size)
-            A10 = int(binascii.hexlify(response[13]),16)*256+int(binascii.hexlify(response[14]),16)
-            A11 = int(binascii.hexlify(response[15]),16)*256+int(binascii.hexlify(response[16]),16)
-            A12 = int(binascii.hexlify(response[17]),16)*256+int(binascii.hexlify(response[18]),16)
-            A13 = int(binascii.hexlify(response[19]),16)*256+int(binascii.hexlify(response[20]),16)
+            print binascii.hexlify(response)
+            # A10 = int(binascii.hexlify(response[13]),16)*256+int(binascii.hexlify(response[14]),16)
+            # A11 = int(binascii.hexlify(response[15]),16)*256+int(binascii.hexlify(response[16]),16)
+            # A12 = int(binascii.hexlify(response[17]),16)*256+int(binascii.hexlify(response[18]),16)
+            # A13 = int(binascii.hexlify(response[19]),16)*256+int(binascii.hexlify(response[20]),16)
 
-            A10 = float(A10)/1024
-            A11 = float(A11)/1024
-            A12 = float(A12)/1024
-            A13 = float(A13)/1024
+            # A10 = float(A10)/1024
+            # A11 = float(A11)/1024
+            # A12 = float(A12)/1024
+            # A13 = float(A13)/1024
 
             if A10<20 and A11<20 and A12<20 and A13<20:
                 ser.write("PostionOutON"+"\r"+"\n")
