@@ -2,6 +2,7 @@ import time
 import serial
 import Adafruit_CharLCD as LCD
 import binascii
+import numpy as np
 
 # Raspberry Pi pin configuration:
 lcd_rs        = 6  # Note this might need to be changed to 21 for older revision Pi's.
@@ -31,6 +32,7 @@ x = 0
 y = 0
 sum_x = 0
 sum_y = 0
+response = np.zero(30)
 
 try:
     while True:
