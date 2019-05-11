@@ -236,7 +236,8 @@ class EKF_Cal_Euler(threading.Thread):
 			Euler_Database_cnt = Euler_Database_cnt+1
 			if Euler_Database_cnt==10:
 				# print (np.mean(Euler_Database,axis=0)*r2d)
-				roll_mean = np.mean(Euler_Database[:,0])
+				roll_mean = np.mean(Euler_Database[:,0]*r2d)
+				lcd.clear()
 				lcd.message("roll:"+str(round(roll_mean,1)))
 				Euler_Database_cnt = 0
 			# print (psutil.cpu_percent())
