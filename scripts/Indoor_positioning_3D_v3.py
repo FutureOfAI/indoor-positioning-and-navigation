@@ -19,6 +19,9 @@ import EKF_6states as EKF6
 from Queue import Queue
 import RPi.GPIO as GPIO 
 import psutil
+import Adafruit_CharLCD as LCD
+import serial
+import binascii
 
 # initial database matrix
 IMU_Database = np.zeros([4000,12])
@@ -44,6 +47,24 @@ imu.setGyroEnable(True)
 imu.setAccelEnable(True)
 imu.setCompassEnable(True)
 poll_interval = imu.IMUGetPollInterval()
+
+# Raspberry Pi pin configuration for 2004 lcd:
+lcd_rs        = 6  # Note this might need to be changed to 21 for older revision Pi's.
+lcd_en        = 22
+lcd_d4        = 25
+lcd_d5        = 24
+lcd_d6        = 23
+lcd_d7        = 18
+
+# Alternatively specify a 20x4 LCD.
+lcd_columns = 20
+lcd_rows    = 4
+
+# Initialize the LCD using the pins above.
+lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7,
+                           lcd_columns, lcd_rows)
+
+lcd.message("test!")
 
 # Matlab algorithm test data 
 grox_test = np.array([0,0.002741556236919,0.002741555560467])
