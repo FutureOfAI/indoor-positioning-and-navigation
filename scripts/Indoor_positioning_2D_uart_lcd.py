@@ -61,9 +61,12 @@ try:
 
             x = float(x)/1024
             y = float(y)/1024
-            # print x, y
             lcd.clear()
-            lcd.message("x:" + str(round(x,2)) + "m; y:" + str(round(y,2)) + "m")
+            if x<20 and y<20:
+                # print x, y
+                lcd.message("x:" + str(round(x,2)) + "m; y:" + str(round(y,2)) + "m")
+            else:
+                lcd.message("Siginal loss")
 
             sum_x = sum_x + x
             sum_y = sum_y + y
@@ -76,7 +79,7 @@ try:
                 n = 0
             ser.flushInput()
             n = n + 1
-                    
+
         time.sleep(0.1)
 
 except KeyboardInterrupt:
